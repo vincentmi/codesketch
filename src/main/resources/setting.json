@@ -1,0 +1,32 @@
+{
+  "profiles" : [ {
+    "name" : "local",
+    "driver" : "mysql",
+    "host" : "127.0.0.1",
+    "port" : 3306,
+    "user" : "root",
+    "password" : "root",
+    "encoding" : "UTF-8",
+    "schema" : "test"
+  }, {
+    "name" : "local-vm",
+    "driver" : "mysql",
+    "host" : "192.168.33.10",
+    "port" : 3306,
+    "user" : "root",
+    "password" : "root",
+    "encoding" : "UTF-8",
+    "schema" : "db2"
+  }, {
+    "name" : "mysql.dev.philo.in",
+    "driver" : "mysql",
+    "host" : "mysql.dev.philo.in",
+    "port" : 3306,
+    "user" : "root",
+    "password" : "root",
+    "encoding" : "UTF-8",
+    "schema" : "db2"
+  } ],
+  "profile" : "mysql.dev.philo.in",
+  "template" : ""
+}
