@@ -45,10 +45,13 @@ public class SettingLoader {
     {
         Profile[]  profiles = setting.getProfiles();
         Profile selected = null ;
+        CodeSketch.getLogger().info("starting find selected profile");
         for(int i = 0 ; i< profiles.length;i++)
         {
+            CodeSketch.getLogger().info("compare "+ profiles[i].getName() + " - "+ setting.getProfile());
             if(profiles[i].getName().equals(setting.getProfile()))
             {
+                CodeSketch.getLogger().info(profiles[i]);
                 selected =profiles[i];
                 break;
             }
