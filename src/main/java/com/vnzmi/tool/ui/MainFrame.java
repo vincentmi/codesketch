@@ -1,23 +1,20 @@
 package com.vnzmi.tool.ui;
 
-import com.sun.tools.javac.jvm.Code;
+import com.sun.javafx.font.FontFactory;
 import com.vnzmi.tool.CodeSketch;
 import com.vnzmi.tool.SettingLoader;
-import com.vnzmi.tool.model.Profile;
-import com.vnzmi.tool.model.ProfileConnection;
-import com.vnzmi.tool.model.Setting;
-import com.vnzmi.tool.model.TableInfo;
-import org.intellij.lang.annotations.Flow;
+import com.vnzmi.tool.model.*;
 
 import javax.swing.*;
-import javax.swing.border.Border;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.logging.SimpleFormatter;
 
 public class MainFrame extends JFrame {
 
@@ -28,6 +25,7 @@ public class MainFrame extends JFrame {
     private JComboBox comboboxProfile = null;
     private JComboBox comboboxSchema = null;
     private JScrollPane centerPanel = null;
+    private TextArea console = null;
 
     private JFrame main;
 
@@ -51,9 +49,25 @@ public class MainFrame extends JFrame {
         setJMenuBar(getMainMenubar());
 
         add(getMainToolbar(), BorderLayout.NORTH);
+
+
+        console =  new TextArea(5,100);
+
+
+        console.setBackground(Color.black);
+        console.setForeground(Color.WHITE);
+        console.setEditable(false);
+
+        add(console,BorderLayout.SOUTH);
+
         centerPanel = new JScrollPane();
         centerPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         centerPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+        JPanel flag = new JPanel(new FlowLayout());
+        JLabel flagText = new JLabel("Please select schema then press refresh");
+
+        flag.add(flagText);
+        centerPanel.getViewport().add(flag);
 
         add(centerPanel, BorderLayout.CENTER);
 
@@ -93,6 +107,11 @@ public class MainFrame extends JFrame {
 
         main = this;
 
+    }
+
+    public void appendConsole(String msg)
+    {
+        this.console.append(new SimpleDateFormat("MM-dd HH:mm:ss ").format(new Date()) + msg + "\n");
     }
 
 
@@ -152,7 +171,13 @@ public class MainFrame extends JFrame {
                     SettingLoader.getInstance().getSetting().setProfile(selectedItem);
                     //SettingLoader.getInstance().store();
                 }
-                reloadSchemaSelection();
+
+                    new Thread(new Runnable() {
+                        public void run() {
+                            reloadSchemaSelection();
+                        }
+                    }).start();
+
 
             }
         });
@@ -187,19 +212,29 @@ public class MainFrame extends JFrame {
             }
         });
         rightPanel.add(refreshButton);
-        rightPanel.add(new JButton("Generate"));
+
+        JButton generateButton = new JButton("Generate");
+        generateButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String templatePath = System.getProperty("user.home")+ File.separator + ".codesketch"+File.separator + "templates"+File.separator + "default";
+                CodeSketch.info(templatePath);
+                Generator gen = new Generator(templatePath);
+                gen.perform("info.json" , new HashMap<String, Object>(){{put("name","miwenshu");}});
+            }
+        });
+        rightPanel.add(generateButton);
 
 
         return toolbar;
     }
 
-    public void reloadProfileSelection() {
+     public void reloadProfileSelection() {
         Setting setting = SettingLoader.getInstance().load().getSetting();
         Profile[] profiles = setting.getProfiles();
 
         DefaultComboBoxModel cbm = (DefaultComboBoxModel) comboboxProfile.getModel();
         cbm.removeAllElements();
-        CodeSketch.getLogger().info(setting.getProfile());
+        CodeSketch.info(setting.getProfile());
         int selected = 0;
         for (int i = 0; i < profiles.length; i++) {
             cbm.addElement(profiles[i].getName());
@@ -220,7 +255,7 @@ public class MainFrame extends JFrame {
             ProfileConnection connection = ProfileConnection.create(profile);
             try {
                 String[] databases = connection.getDatabases();
-                CodeSketch.getLogger().info(databases);
+                CodeSketch.info(databases.toString());
                 int selected = -1;
                 for (int i = 0; i < databases.length; i++) {
                     comboboxSchema.addItem(databases[i]);
@@ -233,7 +268,7 @@ public class MainFrame extends JFrame {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-                CodeSketch.getLogger().error(e.getMessage());
+                CodeSketch.error(e.getMessage());
                 showMessage(e.getMessage());
             }
         }
@@ -245,7 +280,7 @@ public class MainFrame extends JFrame {
             showMessage("profile not selected");
         }
 
-        CodeSketch.getLogger().info("current db = " + profile);
+        CodeSketch.info("current db = " + profile);
 
         ProfileConnection pc = ProfileConnection.create(profile);
         HashMap<String, TableInfo> tables;
@@ -263,54 +298,9 @@ public class MainFrame extends JFrame {
             panel.setLayout(panelLayout);
             while (it.hasNext()) {
                 tableInfo = it.next();
-                CodeSketch.getLogger().info(tableInfo);
-                JPanel tablePanel = new JPanel();
-                tablePanel.setLayout(new BorderLayout());
-                tablePanel.setBorder(BorderFactory.createLineBorder(Color.lightGray));
-
-                JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 3));
-                titlePanel.setBackground(Color.lightGray);
-                titlePanel.add(new JCheckBox(""));
-                titlePanel.add(new JLabel(tableInfo.getName()));
-                tablePanel.add(titlePanel, BorderLayout.NORTH);
-
-                JPanel checkboxPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
-                checkboxPanel.add(new JCheckBox("view"));
-                checkboxPanel.add(new JCheckBox("model"));
-                checkboxPanel.add(new JCheckBox("controller"));
-                checkboxPanel.add(new JCheckBox("view"));
-                tablePanel.add(checkboxPanel, BorderLayout.CENTER);
-
-                JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
-                buttonPanel.add(new JButton("Preview"));
-                buttonPanel.add(new JButton("Generate"));
-                tablePanel.add(buttonPanel, BorderLayout.SOUTH);
-                panel.add(tablePanel);
-                tablePanel.addMouseListener(new MouseListener() {
-                    public void mouseClicked(MouseEvent e) {
-
-                    }
-
-                    public void mousePressed(MouseEvent e) {
-
-                    }
-
-                    public void mouseReleased(MouseEvent e) {
-
-                    }
-
-                    public void mouseEntered(MouseEvent e) {
-                        JPanel jp = (JPanel) e.getSource();
-                        jp.setBorder(BorderFactory.createLineBorder(Color.red));
-                    }
-
-                    public void mouseExited(MouseEvent e) {
-                        JPanel jp = (JPanel) e.getSource();
-                        jp.setBorder(BorderFactory.createLineBorder(Color.lightGray));
-                    }
-                });
+                panel.add(new TablePanel(tableInfo).getPanel());
             }
-
+            CodeSketch.info(tables.size() + " tables loaded");
             panel.setVisible(true);
             int rows = panelLayout.getRows();
             panel.setAutoscrolls(false);

@@ -45,13 +45,13 @@ public class SettingLoader {
     {
         Profile[]  profiles = setting.getProfiles();
         Profile selected = null ;
-        CodeSketch.getLogger().info("starting find selected profile");
+        CodeSketch.info("starting find selected profile");
         for(int i = 0 ; i< profiles.length;i++)
         {
-            CodeSketch.getLogger().info("compare "+ profiles[i].getName() + " - "+ setting.getProfile());
+            CodeSketch.info("compare "+ profiles[i].getName() + " - "+ setting.getProfile());
             if(profiles[i].getName().equals(setting.getProfile()))
             {
-                CodeSketch.getLogger().info(profiles[i]);
+                CodeSketch.info(profiles[i].toJson());
                 selected =profiles[i];
                 break;
             }
@@ -68,16 +68,16 @@ public class SettingLoader {
         try {
 
             String filepath = System.getProperty("user.home") + File.separator + ".codesketch" + File.separator + "setting.json";
-            CodeSketch.getLogger().info("loading "+filepath);
+            CodeSketch.info("loading "+filepath);
             File f = new File(filepath);
             ObjectMapper mapper = new ObjectMapper();
             this.setting = (Setting) mapper.readValue(f, Setting.class);
 
-            CodeSketch.getLogger().info("loaded setting " + this.setting);
+            CodeSketch.info("loaded setting " + this.setting);
 
         } catch (IOException e) {
             e.printStackTrace();
-            CodeSketch.getLogger().error(e.getMessage());
+            CodeSketch.error(e.getMessage());
             CodeSketch.getMainFrame().showMessage(e.getMessage());
         }
         return this;
@@ -94,7 +94,7 @@ public class SettingLoader {
             fos.write(setting.toJson().getBytes("UTF-8"));
         } catch (IOException e) {
             e.printStackTrace();
-            CodeSketch.getLogger().error(e.getMessage());
+            CodeSketch.error(e.getMessage());
         }
 
     }

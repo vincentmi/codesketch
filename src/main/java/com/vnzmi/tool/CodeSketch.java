@@ -12,7 +12,7 @@ public class CodeSketch {
     private static Setting setting = null;
 
     public static void main(String[] args){
-        getLogger().info("Application starting");
+        info("Application starting");
         mainFrame = new MainFrame();
         SettingLoader.getInstance().load();
 
@@ -30,5 +30,22 @@ public class CodeSketch {
             logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
         }
         return logger;
+    }
+
+    public static  void info(String msg)
+    {
+        getLogger().info(msg);
+        if(mainFrame != null){
+            getMainFrame().appendConsole(msg);
+        }
+
+    }
+
+    public static  void error(String msg)
+    {
+        getLogger().error(msg);
+        if(mainFrame != null){
+            getMainFrame().appendConsole(msg);
+        }
     }
 }

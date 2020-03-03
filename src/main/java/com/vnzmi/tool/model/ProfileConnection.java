@@ -97,7 +97,7 @@ public class ProfileConnection {
                 "ORDER BY `TABLE_NAME` ASC ," +
                 "`ORDINAL_POSITION` ASC";
 
-        CodeSketch.getLogger().info(sql);
+        CodeSketch.info(sql);
 
         ResultSet rs = query.executeQuery(sql);
 
