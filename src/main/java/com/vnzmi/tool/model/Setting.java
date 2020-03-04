@@ -10,6 +10,7 @@ public class Setting {
     private ArrayList<Profile> profiles;
     private String profile = "";
     private String template = "";
+    private String project = "";
 
     public ArrayList<Profile> getProfiles() {
         return profiles;
@@ -25,6 +26,14 @@ public class Setting {
 
     public void setProfile(String profile) {
         this.profile = profile;
+    }
+
+    public String getProject() {
+        return project;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
     }
 
     public String getTemplate() {

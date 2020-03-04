@@ -1,0 +1,8 @@
+{
+  "default" : {
+    "package" : "in.philo.util"
+  },
+  "spring_micro_service" : {
+    "package": "xxxx"
+  }
+}

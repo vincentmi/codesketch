@@ -28,5 +28,6 @@
     "schema" : "db2"
   } ],
   "profile" : "mysql.dev.philo.in",
-  "template" : ""
+  "template" : "",
+  "project"  : "/User/vincentmi/dev/xf/uc"
 }

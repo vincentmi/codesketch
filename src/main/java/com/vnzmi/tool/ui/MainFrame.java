@@ -5,9 +5,12 @@ import com.vnzmi.tool.Loader;
 import com.vnzmi.tool.model.*;
 
 import javax.swing.*;
+import javax.swing.event.AncestorEvent;
+import javax.swing.event.AncestorListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,7 +36,7 @@ public class MainFrame extends JFrame {
     }
 
     public void init() {
-        setTitle("CodeSketch");
+        setTitle("Code Sketch");
         setResizable(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setDefaultLookAndFeelDecorated(true);
@@ -48,9 +51,7 @@ public class MainFrame extends JFrame {
 
         add(getMainToolbar(), BorderLayout.NORTH);
 
-
-        console =  new JTextArea(5,100);
-
+        console = new JTextArea(5, 100);
 
         console.setBackground(Color.black);
         console.setForeground(Color.WHITE);
@@ -60,7 +61,7 @@ public class MainFrame extends JFrame {
         consolePanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         consolePanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         consolePanel.getViewport().add(console);
-        add(consolePanel,BorderLayout.SOUTH);
+        add(consolePanel, BorderLayout.SOUTH);
 
         centerPanel = new JScrollPane();
         centerPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
@@ -82,8 +83,7 @@ public class MainFrame extends JFrame {
     }
 
 
-    public void appendConsole(String msg)
-    {
+    public void appendConsole(String msg) {
         this.console.append(new SimpleDateFormat("MM-dd HH:mm:ss - ").format(new Date()) + msg + "\n");
     }
 
@@ -127,6 +127,8 @@ public class MainFrame extends JFrame {
 
     private JToolBar getMainToolbar() {
 
+        final Setting setting = Loader.getInstance().getSetting();
+
         toolbarLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         comboboxProfile = new JComboBox();
         comboboxSchema = new JComboBox();
@@ -139,34 +141,49 @@ public class MainFrame extends JFrame {
         tempPanel.add(new JLabel("Template:"));
         final JComboBox comboboxTemp = new JComboBox();
         ArrayList<TemplateInfo> templateInfos = Loader.getInstance().getTemplateInfos();
-        for(int i =0 ;i<templateInfos.size();i++)
-        {
+        for (int i = 0; i < templateInfos.size(); i++) {
             comboboxTemp.addItem(templateInfos.get(i).getName());
         }
         tempPanel.add(comboboxTemp);
         JButton tempButton = new JButton("Variables");
         tempButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-
                 new TemplateVariablesView(comboboxTemp.getSelectedIndex()).show();
             }
         });
         tempPanel.add(tempButton);
 
+        JPanel projectPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        final JTextField textProject = new JTextField(setting.getProject());
+        textProject.setColumns(40);
+        projectPanel.add(new JLabel("Project:"));
+        projectPanel.add(textProject);
+
+        textProject.addFocusListener(new FocusListener() {
+            @Override
+            public void focusGained(FocusEvent e) {
+
+            }
+
+            @Override
+            public void focusLost(FocusEvent e) {
+                setting.setProject(textProject.getText());
+                Loader.getInstance().saveSetting();
+            }
+        });
+
         comboboxProfile.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-                if(e.getStateChange() == ItemEvent.SELECTED)
-                {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
                     Setting setting = Loader.getInstance().getSetting();
                     Profile selected = setting.getProfiles().get(comboboxProfile.getSelectedIndex());
                     setting.setProfile(selected.getName());
                 }
-
                 new Thread(new Runnable() {
-                        public void run() {
-                            reloadSchemaSelection();
-                        }
-                    }).start();
+                    public void run() {
+                        reloadSchemaSelection();
+                    }
+                }).start();
             }
         });
 
@@ -183,6 +200,40 @@ public class MainFrame extends JFrame {
         });
 
         JPanel rightPanel = new JPanel();
+
+        JButton btnOpenProject = new JButton("Open Project");
+        btnOpenProject.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Desktop desktop = Desktop.getDesktop();
+                File dirToOpen = null;
+                try {
+                    dirToOpen = new File(textProject.getText());
+                    desktop.open(dirToOpen);
+                } catch (IOException e1) {
+                    CodeSketch.error(e1.getMessage());
+                }
+            }
+        });
+
+        rightPanel.add(btnOpenProject);
+
+        final JButton openSetting = new JButton("Open Setting");
+        openSetting.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Desktop desktop = Desktop.getDesktop();
+                File dirToOpen = null;
+                try {
+                    dirToOpen = new File(Loader.getInstance().getRootPath());
+                    desktop.open(dirToOpen);
+                } catch (IOException e1) {
+                    CodeSketch.error(e1.getMessage());
+                }
+            }
+        });
+        rightPanel.add(openSetting);
+
         final JButton reloadProfileButton = new JButton("Reload Profile");
         reloadProfileButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -205,23 +256,26 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 TemplateInfo info = Loader.getInstance().getTemplateInfos().get(comboboxTemp.getSelectedIndex());
                 Generator gen = new Generator(info);
-                gen.perform("info.json" , new HashMap<String, Object>(){{put("name","miwenshu");}});
+                gen.perform("info.json", new HashMap<String, Object>() {{
+                    put("name", "miwenshu");
+                }});
             }
         });
         rightPanel.add(generateButton);
 
         JToolBar toolbar = new JToolBar();
         toolbar.setFloatable(false);
-        toolbar.setLayout(new BorderLayout());
-        toolbar.add(toolbarLeftPanel, BorderLayout.CENTER);
-        toolbar.add(rightPanel, BorderLayout.EAST);
-        toolbar.add(tempPanel,BorderLayout.SOUTH);
+        toolbar.setLayout(new GridLayout(4,1,3,3));
+        toolbar.add(toolbarLeftPanel);
+        toolbar.add(tempPanel);
+        toolbar.add(projectPanel);
+        toolbar.add(rightPanel);
 
         return toolbar;
     }
 
-     public void reloadProfileSelection() {
-        Setting setting  = Loader.getInstance().getSetting();
+    public void reloadProfileSelection() {
+        Setting setting = Loader.getInstance().getSetting();
         ArrayList<Profile> profiles = setting.getProfiles();
 
         DefaultComboBoxModel cbm = (DefaultComboBoxModel) comboboxProfile.getModel();
@@ -238,7 +292,7 @@ public class MainFrame extends JFrame {
         comboboxProfile.setSelectedIndex(selected);
     }
 
-    synchronized  public void reloadSchemaSelection() {
+    synchronized public void reloadSchemaSelection() {
         comboboxSchema.removeAllItems();
         Profile profile = Loader.getInstance().getSetting().getProfiles().get(comboboxProfile.getSelectedIndex());
         if (profile == null) {
