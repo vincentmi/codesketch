@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 
-public class TemplateVariablesView {
+public class TemplateView {
 
     private  int selectedIndex;
     private TemplateInfo info;
@@ -29,7 +29,7 @@ public class TemplateVariablesView {
     private JFrame frame;
 
 
-    public TemplateVariablesView(int index)
+    public TemplateView(int index)
     {
         selectedIndex = index;
         info = Loader.getInstance().getTemplateInfos().get(selectedIndex);

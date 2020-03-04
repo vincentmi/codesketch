@@ -3,6 +3,8 @@ import com.vnzmi.tool.model.TableInfo;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -30,7 +32,14 @@ public class TablePanel {
         //tablePanel.add(checkboxPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
-        buttonPanel.add(new JButton("Preview"));
+        JButton btnPreview = new JButton("Preview");
+        btnPreview.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new PreviewPanel();
+            }
+        });
+        buttonPanel.add(btnPreview);
         buttonPanel.add(new JButton("Generate"));
         tablePanel.add(buttonPanel, BorderLayout.SOUTH);
         tablePanel.addMouseListener(new MouseListener() {

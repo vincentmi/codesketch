@@ -5,8 +5,6 @@ import com.vnzmi.tool.Loader;
 import com.vnzmi.tool.model.*;
 
 import javax.swing.*;
-import javax.swing.event.AncestorEvent;
-import javax.swing.event.AncestorListener;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -148,7 +146,7 @@ public class MainFrame extends JFrame {
         JButton tempButton = new JButton("Variables");
         tempButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                new TemplateVariablesView(comboboxTemp.getSelectedIndex()).show();
+                new TemplateView(comboboxTemp.getSelectedIndex()).show();
             }
         });
         tempPanel.add(tempButton);
@@ -256,9 +254,12 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 TemplateInfo info = Loader.getInstance().getTemplateInfos().get(comboboxTemp.getSelectedIndex());
                 Generator gen = new Generator(info);
-                gen.perform("info.json", new HashMap<String, Object>() {{
+                HashMap<String,Object> data = new HashMap<String, Object>() {{
                     put("name", "miwenshu");
-                }});
+                }};
+                CodeSketch.info(gen.perform("info.json", data));
+                CodeSketch.info(gen.performString("xxx${name}n , ${name},12312", data));
+
             }
         });
         rightPanel.add(generateButton);
