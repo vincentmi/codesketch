@@ -16,10 +16,12 @@ import java.util.HashMap;
  */
 public class Generator {
     private Configuration cfg ;
-    public Generator(String path)
+    private TemplateInfo templateInfo;
+    public Generator(TemplateInfo templateInfo)
     {
+        this.templateInfo = templateInfo;
         cfg = new Configuration(Configuration.VERSION_2_3_28);
-        File templateHome = new File(path);
+        File templateHome = new File(templateInfo.getPath());
         try {
             cfg.setDirectoryForTemplateLoading(templateHome);
             cfg.setDefaultEncoding("UTF-8");
@@ -39,7 +41,6 @@ public class Generator {
             StringWriter sw = new StringWriter();
             temp.process(data,sw);
             CodeSketch.info(sw.toString());
-
         } catch (IOException e) {
             e.printStackTrace();
             CodeSketch.getMainFrame().showMessage(e.getMessage());

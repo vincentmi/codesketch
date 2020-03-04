@@ -3,17 +3,19 @@ package com.vnzmi.tool.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.ArrayList;
+
 
 public class Setting {
-    private Profile[] profiles;
+    private ArrayList<Profile> profiles;
     private String profile = "";
     private String template = "";
 
-    public Profile[] getProfiles() {
+    public ArrayList<Profile> getProfiles() {
         return profiles;
     }
 
-    public void setProfiles(Profile[] profiles) {
+    public void setProfiles(ArrayList<Profile> profiles) {
         this.profiles = profiles;
     }
 

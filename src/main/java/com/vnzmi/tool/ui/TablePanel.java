@@ -1,14 +1,10 @@
 package com.vnzmi.tool.ui;
-
-import com.vnzmi.tool.CodeSketch;
 import com.vnzmi.tool.model.TableInfo;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.util.HashMap;
-import java.util.Iterator;
 
 public class TablePanel {
     private TableInfo tableInfo;
@@ -16,7 +12,6 @@ public class TablePanel {
     public TablePanel(TableInfo tableinfo)
     {
         this.tableInfo = tableinfo;
-        //CodeSketch.info(this.tableInfo.toJson());
         tablePanel =  new JPanel();
 
         tablePanel.setLayout(new BorderLayout());
@@ -24,8 +19,7 @@ public class TablePanel {
 
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 3));
         titlePanel.setBackground(Color.lightGray);
-        titlePanel.add(new JCheckBox(""));
-        titlePanel.add(new JLabel(tableInfo.getName()));
+        titlePanel.add(new JCheckBox(tableInfo.getName()));
         tablePanel.add(titlePanel, BorderLayout.NORTH);
 
         JPanel checkboxPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
@@ -33,7 +27,7 @@ public class TablePanel {
         checkboxPanel.add(new JCheckBox("model"));
         checkboxPanel.add(new JCheckBox("controller"));
         checkboxPanel.add(new JCheckBox("view"));
-        tablePanel.add(checkboxPanel, BorderLayout.CENTER);
+        //tablePanel.add(checkboxPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
         buttonPanel.add(new JButton("Preview"));

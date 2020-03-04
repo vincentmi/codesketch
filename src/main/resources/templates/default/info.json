@@ -1,0 +1,22 @@
+{
+  "name" : "default" ,
+  "url" : "http://vnzmi.com/codesketch/default.zip",
+  "author" : "${name}",
+  "description":"spring 默认的框架模板",
+  "variables":[
+    {
+      "name" : "basePackage",
+      "defaultValue": "in.philo.ops.app",
+      "description":"包路径"
+    }
+
+  ],
+  "files" : [
+    {
+      "file" : "service.java",
+      "name" : "{modelCamel}.java",
+      "saveTo" : "src/main/java/{package}"
+    }
+  ]
+
+}

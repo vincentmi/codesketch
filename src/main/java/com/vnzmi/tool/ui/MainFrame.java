@@ -1,8 +1,7 @@
 package com.vnzmi.tool.ui;
 
-import com.sun.javafx.font.FontFactory;
 import com.vnzmi.tool.CodeSketch;
-import com.vnzmi.tool.SettingLoader;
+import com.vnzmi.tool.Loader;
 import com.vnzmi.tool.model.*;
 
 import javax.swing.*;
@@ -11,10 +10,10 @@ import java.awt.event.*;
 import java.io.File;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.logging.SimpleFormatter;
 
 public class MainFrame extends JFrame {
 
@@ -25,7 +24,7 @@ public class MainFrame extends JFrame {
     private JComboBox comboboxProfile = null;
     private JComboBox comboboxSchema = null;
     private JScrollPane centerPanel = null;
-    private TextArea console = null;
+    private JTextArea console = null;
 
     private JFrame main;
 
@@ -41,7 +40,6 @@ public class MainFrame extends JFrame {
 
         setSize(800, 600);
         setMinimumSize(new Dimension(400, 300));
-        JLabel label = new JLabel("Code Sketch");
 
         BorderLayout layout = new BorderLayout();
         getContentPane().setLayout(layout);
@@ -51,67 +49,42 @@ public class MainFrame extends JFrame {
         add(getMainToolbar(), BorderLayout.NORTH);
 
 
-        console =  new TextArea(5,100);
+        console =  new JTextArea(5,100);
 
 
         console.setBackground(Color.black);
         console.setForeground(Color.WHITE);
         console.setEditable(false);
 
-        add(console,BorderLayout.SOUTH);
+        JScrollPane consolePanel = new JScrollPane();
+        consolePanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        consolePanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        consolePanel.getViewport().add(console);
+        add(consolePanel,BorderLayout.SOUTH);
 
         centerPanel = new JScrollPane();
         centerPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         centerPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         JPanel flag = new JPanel(new FlowLayout());
         JLabel flagText = new JLabel("Please select schema then press refresh");
-
+        flagText.setFont(new java.awt.Font("Dialog", 1, 18));
         flag.add(flagText);
         centerPanel.getViewport().add(flag);
+        centerPanel.setBackground(Color.WHITE);
 
         add(centerPanel, BorderLayout.CENTER);
 
         setVisible(true);
 
-
-        addWindowListener(new WindowListener() {
-            public void windowOpened(WindowEvent e) {
-                reloadProfileSelection();
-            }
-
-            public void windowClosing(WindowEvent e) {
-
-            }
-
-            public void windowClosed(WindowEvent e) {
-
-            }
-
-            public void windowIconified(WindowEvent e) {
-
-            }
-
-            public void windowDeiconified(WindowEvent e) {
-
-            }
-
-            public void windowActivated(WindowEvent e) {
-
-            }
-
-            public void windowDeactivated(WindowEvent e) {
-
-            }
-        });
-
-
+        addWindowListener(new MainFrameListener());
         main = this;
 
     }
 
+
     public void appendConsole(String msg)
     {
-        this.console.append(new SimpleDateFormat("MM-dd HH:mm:ss ").format(new Date()) + msg + "\n");
+        this.console.append(new SimpleDateFormat("MM-dd HH:mm:ss - ").format(new Date()) + msg + "\n");
     }
 
 
@@ -153,32 +126,47 @@ public class MainFrame extends JFrame {
 
 
     private JToolBar getMainToolbar() {
-        JToolBar toolbar = new JToolBar();
-        toolbar.setFloatable(false);
-        toolbar.setLayout(new BorderLayout());
-        toolbarLeftPanel = new JPanel(new GridLayout(1, 2, 5, 5));
+
+        toolbarLeftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         comboboxProfile = new JComboBox();
         comboboxSchema = new JComboBox();
+        toolbarLeftPanel.add(new JLabel("Profile:"));
         toolbarLeftPanel.add(comboboxProfile);
         toolbarLeftPanel.add(comboboxSchema);
-        toolbar.add(toolbarLeftPanel, BorderLayout.CENTER);
+
+
+        JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        tempPanel.add(new JLabel("Template:"));
+        final JComboBox comboboxTemp = new JComboBox();
+        ArrayList<TemplateInfo> templateInfos = Loader.getInstance().getTemplateInfos();
+        for(int i =0 ;i<templateInfos.size();i++)
+        {
+            comboboxTemp.addItem(templateInfos.get(i).getName());
+        }
+        tempPanel.add(comboboxTemp);
+        JButton tempButton = new JButton("Variables");
+        tempButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+
+                new TemplateVariablesView(comboboxTemp.getSelectedIndex()).show();
+            }
+        });
+        tempPanel.add(tempButton);
 
         comboboxProfile.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
-
-                String selectedItem = (String) comboboxProfile.getSelectedItem();
-                if (selectedItem != null) {
-                    SettingLoader.getInstance().getSetting().setProfile(selectedItem);
-                    //SettingLoader.getInstance().store();
+                if(e.getStateChange() == ItemEvent.SELECTED)
+                {
+                    Setting setting = Loader.getInstance().getSetting();
+                    Profile selected = setting.getProfiles().get(comboboxProfile.getSelectedIndex());
+                    setting.setProfile(selected.getName());
                 }
 
-                    new Thread(new Runnable() {
+                new Thread(new Runnable() {
                         public void run() {
                             reloadSchemaSelection();
                         }
                     }).start();
-
-
             }
         });
 
@@ -186,16 +174,15 @@ public class MainFrame extends JFrame {
             public void itemStateChanged(ItemEvent e) {
                 String selectedItem = (String) comboboxSchema.getSelectedItem();
                 if (selectedItem != null) {
-                    Profile profile = SettingLoader.getInstance().getSelectedProfile();
-                    profile.setSchema(selectedItem);
-                    SettingLoader.getInstance().store();
+                    Setting setting = Loader.getInstance().getSetting();
+                    Profile selected = setting.getProfiles().get(comboboxProfile.getSelectedIndex());
+                    selected.setSchema(selectedItem);
+                    Loader.getInstance().saveSetting();
                 }
             }
         });
 
         JPanel rightPanel = new JPanel();
-        toolbar.add(rightPanel, BorderLayout.EAST);
-
         final JButton reloadProfileButton = new JButton("Reload Profile");
         reloadProfileButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -216,39 +203,44 @@ public class MainFrame extends JFrame {
         JButton generateButton = new JButton("Generate");
         generateButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                String templatePath = System.getProperty("user.home")+ File.separator + ".codesketch"+File.separator + "templates"+File.separator + "default";
-                CodeSketch.info(templatePath);
-                Generator gen = new Generator(templatePath);
+                TemplateInfo info = Loader.getInstance().getTemplateInfos().get(comboboxTemp.getSelectedIndex());
+                Generator gen = new Generator(info);
                 gen.perform("info.json" , new HashMap<String, Object>(){{put("name","miwenshu");}});
             }
         });
         rightPanel.add(generateButton);
 
+        JToolBar toolbar = new JToolBar();
+        toolbar.setFloatable(false);
+        toolbar.setLayout(new BorderLayout());
+        toolbar.add(toolbarLeftPanel, BorderLayout.CENTER);
+        toolbar.add(rightPanel, BorderLayout.EAST);
+        toolbar.add(tempPanel,BorderLayout.SOUTH);
 
         return toolbar;
     }
 
      public void reloadProfileSelection() {
-        Setting setting = SettingLoader.getInstance().load().getSetting();
-        Profile[] profiles = setting.getProfiles();
+        Setting setting  = Loader.getInstance().getSetting();
+        ArrayList<Profile> profiles = setting.getProfiles();
 
         DefaultComboBoxModel cbm = (DefaultComboBoxModel) comboboxProfile.getModel();
         cbm.removeAllElements();
-        CodeSketch.info(setting.getProfile());
         int selected = 0;
-        for (int i = 0; i < profiles.length; i++) {
-            cbm.addElement(profiles[i].getName());
-            if (profiles[i].getName().equals(setting.getProfile())) {
+        Profile profile;
+        for (int i = 0; i < profiles.size(); i++) {
+            profile = profiles.get(i);
+            cbm.addElement(profile.getName());
+            if (profile.getName().equals(setting.getProfile())) {
                 selected = i;
             }
         }
-
         comboboxProfile.setSelectedIndex(selected);
     }
 
-    public void reloadSchemaSelection() {
+    synchronized  public void reloadSchemaSelection() {
         comboboxSchema.removeAllItems();
-        Profile profile = SettingLoader.getInstance().getSelectedProfile();
+        Profile profile = Loader.getInstance().getSetting().getProfiles().get(comboboxProfile.getSelectedIndex());
         if (profile == null) {
             showMessage("profile not selected");
         } else {
@@ -275,7 +267,7 @@ public class MainFrame extends JFrame {
     }
 
     public void refreshTables() {
-        Profile profile = SettingLoader.getInstance().getSelectedProfile();
+        Profile profile = Loader.getInstance().getSetting().getProfiles().get(comboboxProfile.getSelectedIndex());
         if (profile == null) {
             showMessage("profile not selected");
         }
