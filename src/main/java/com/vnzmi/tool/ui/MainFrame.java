@@ -54,6 +54,7 @@ public class MainFrame extends JFrame {
         console.setBackground(Color.black);
         console.setForeground(Color.WHITE);
         console.setEditable(false);
+        console.setAutoscrolls(true);
 
         JScrollPane consolePanel = new JScrollPane();
         consolePanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -65,6 +66,7 @@ public class MainFrame extends JFrame {
         centerPanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         centerPanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
         JPanel flag = new JPanel(new FlowLayout());
+        flag.setBackground(Color.white);
         JLabel flagText = new JLabel("Please select schema then press refresh");
         flagText.setFont(new java.awt.Font("Dialog", 1, 18));
         flag.add(flagText);
@@ -76,7 +78,10 @@ public class MainFrame extends JFrame {
         setVisible(true);
 
         addWindowListener(new MainFrameListener());
+
+        CodeSketch.center(this);
         main = this;
+
 
     }
 
@@ -123,7 +128,8 @@ public class MainFrame extends JFrame {
     }
 
 
-    private JToolBar getMainToolbar() {
+
+    private JPanel getMainToolbar() {
 
         final Setting setting = Loader.getInstance().getSetting();
 
@@ -200,6 +206,7 @@ public class MainFrame extends JFrame {
         JPanel rightPanel = new JPanel();
 
         JButton btnOpenProject = new JButton("Open Project");
+
         btnOpenProject.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -264,8 +271,9 @@ public class MainFrame extends JFrame {
         });
         rightPanel.add(generateButton);
 
-        JToolBar toolbar = new JToolBar();
-        toolbar.setFloatable(false);
+        //JToolBar toolbar = new JToolBar();
+        JPanel toolbar = new JPanel();
+        //toolbar.setFloatable(false);
         toolbar.setLayout(new GridLayout(4,1,3,3));
         toolbar.add(toolbarLeftPanel);
         toolbar.add(tempPanel);
@@ -338,6 +346,8 @@ public class MainFrame extends JFrame {
             centerPanel.setVerticalScrollBar(new JScrollBar());
 
             JPanel panel = new JPanel();
+
+            panel.setBackground(Color.white);
 
             Iterator<TableInfo> it = tables.values().iterator();
             TableInfo tableInfo;

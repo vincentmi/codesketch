@@ -1,10 +1,9 @@
 package com.vnzmi.tool;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vnzmi.tool.model.Setting;
 import com.vnzmi.tool.model.TemplateInfo;
-import com.vnzmi.tool.model.TemplateValue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,12 +11,13 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Loader {
     public static Loader instance = null ;
     private  String rootPath = null;
     private  Setting setting = null;
-    private HashMap<String,TemplateValue> templateValues = null;
+    private Map<String,Map<String,String>> templateValues = null;
 
     private ArrayList<TemplateInfo> templateInfos;
     public static Loader getInstance()
@@ -64,6 +64,7 @@ public class Loader {
         try {
             FileOutputStream fos = new FileOutputStream(f);
             fos.write(setting.toJson().getBytes("UTF-8"));
+            CodeSketch.info("save "+filepath);
         } catch (IOException e) {
             e.printStackTrace();
             CodeSketch.error(e.getMessage());
@@ -130,7 +131,7 @@ public class Loader {
     }
 
 
-    public HashMap<String,TemplateValue> getTemplateValues()
+    public Map<String,Map<String,String>> getTemplateValues()
     {
         if(templateValues == null)
         {
@@ -150,17 +151,19 @@ public class Loader {
         {
             ObjectMapper mapper = new ObjectMapper();
             try {
-                HashMap<String,TemplateValue> tem = new HashMap<String, TemplateValue>();
-                templateValues = mapper.readValue(file,tem.getClass());
-                CodeSketch.info(" values size=" + templateValues.size());
+                templateValues = mapper.readValue(file,new TypeReference<Map<String,Map<String,String>>>(){});
+                //CodeSketch.info(" values size=" + templateValues.size());
+                //CodeSketch.info(templateValues.get("spring_micro_service").get("basePackageDir"));
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        }else{
+            templateValues = new HashMap<String,Map<String,String>>();
         }
     }
 
-    private void saveTemplateValues()
+    public void saveTemplateValues()
     {
         String filepath = rootPath+ File.separator + "values.json";
         File f = new File(filepath);
@@ -169,6 +172,7 @@ public class Loader {
             String text = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(getTemplateValues());
             FileOutputStream fos = new FileOutputStream(f);
             fos.write(text.getBytes("UTF-8"));
+            CodeSketch.info("save "+filepath);
         } catch (IOException e) {
             e.printStackTrace();
             CodeSketch.error(e.getMessage());

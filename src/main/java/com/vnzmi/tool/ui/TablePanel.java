@@ -15,6 +15,7 @@ public class TablePanel {
     {
         this.tableInfo = tableinfo;
         tablePanel =  new JPanel();
+        tablePanel.setBackground(Color.white);
 
         tablePanel.setLayout(new BorderLayout());
         tablePanel.setBorder(BorderFactory.createLineBorder(Color.lightGray));
@@ -32,6 +33,7 @@ public class TablePanel {
         //tablePanel.add(checkboxPanel, BorderLayout.CENTER);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
+        buttonPanel.setBackground(Color.white);
         JButton btnPreview = new JButton("Preview");
         btnPreview.addActionListener(new ActionListener() {
             @Override

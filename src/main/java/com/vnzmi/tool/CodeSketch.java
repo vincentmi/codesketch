@@ -5,6 +5,9 @@ import com.vnzmi.tool.ui.MainFrame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.*;
+import java.awt.*;
+
 
 public class CodeSketch {
     private static Logger logger = null;
@@ -28,6 +31,12 @@ public class CodeSketch {
             logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
         }
         return logger;
+    }
+
+    public static void  center(JFrame frame)
+    {
+        Dimension screenSize =Toolkit.getDefaultToolkit().getScreenSize();
+        frame.setLocation(screenSize.width/2-frame.getWidth()/2,screenSize.height/2-frame.getHeight()/2);
     }
 
     public static  void info(String msg)
