@@ -1,5 +1,9 @@
 package com.vnzmi.tool.ui;
+import com.vnzmi.tool.CodeSketch;
+import com.vnzmi.tool.Loader;
 import com.vnzmi.tool.model.TableInfo;
+import com.vnzmi.tool.model.TemplateFile;
+import com.vnzmi.tool.model.TemplateInfo;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,62 +15,44 @@ import java.awt.event.MouseListener;
 public class TablePanel {
     private TableInfo tableInfo;
     private JPanel tablePanel;
+    private JCheckBox tableCheckBox ;
     public TablePanel(TableInfo tableinfo)
     {
         this.tableInfo = tableinfo;
         tablePanel =  new JPanel();
         tablePanel.setBackground(Color.white);
 
-        tablePanel.setLayout(new BorderLayout());
-        tablePanel.setBorder(BorderFactory.createLineBorder(Color.lightGray));
+        tablePanel.setPreferredSize(new Dimension(CodeSketch.getMainFrame().getWidth() - 10,30));
+
+        tablePanel.setLayout(new GridLayout(1,3,0,0));
 
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 3));
-        titlePanel.setBackground(Color.lightGray);
-        titlePanel.add(new JCheckBox(tableInfo.getName()));
-        tablePanel.add(titlePanel, BorderLayout.NORTH);
+
+        tableCheckBox = new JCheckBox(tableInfo.getName());
+
+        titlePanel.add(tableCheckBox);
+        titlePanel.setBackground(null);
+        tablePanel.add(titlePanel);
 
         JPanel checkboxPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
-        checkboxPanel.add(new JCheckBox("view"));
-        checkboxPanel.add(new JCheckBox("model"));
-        checkboxPanel.add(new JCheckBox("controller"));
-        checkboxPanel.add(new JCheckBox("view"));
-        //tablePanel.add(checkboxPanel, BorderLayout.CENTER);
+        checkboxPanel.setBackground(null);
+
+        TemplateInfo templateInfo = CodeSketch.getMainFrame().getSelectedTemplateInfo();
+        TemplateFile[] files = templateInfo.getFiles();
+        for(int i = 0 ;i<files.length ;i++)
+        {
+            checkboxPanel.add(new JCheckBox(files[i].getFile()));
+        }
+        tablePanel.add(checkboxPanel);
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 3, 3));
-        buttonPanel.setBackground(Color.white);
+        buttonPanel.setBackground(null);
         JButton btnPreview = new JButton("Preview");
-        btnPreview.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new PreviewPanel(tableInfo);
-            }
-        });
+        btnPreview.addActionListener(e -> new PreviewPanel(tableInfo));
         buttonPanel.add(btnPreview);
         buttonPanel.add(new JButton("Generate"));
-        tablePanel.add(buttonPanel, BorderLayout.SOUTH);
-        tablePanel.addMouseListener(new MouseListener() {
-            public void mouseClicked(MouseEvent e) {
-
-            }
-
-            public void mousePressed(MouseEvent e) {
-
-            }
-
-            public void mouseReleased(MouseEvent e) {
-
-            }
-
-            public void mouseEntered(MouseEvent e) {
-                JPanel jp = (JPanel) e.getSource();
-                jp.setBorder(BorderFactory.createLineBorder(Color.red));
-            }
-
-            public void mouseExited(MouseEvent e) {
-                JPanel jp = (JPanel) e.getSource();
-                jp.setBorder(BorderFactory.createLineBorder(Color.lightGray));
-            }
-        });
+        tablePanel.add(buttonPanel);
+        tablePanel.addMouseListener(new TablePanelMouseListener(tableCheckBox));
     }
 
     public JPanel getPanel()

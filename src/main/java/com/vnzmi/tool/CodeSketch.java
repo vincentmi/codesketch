@@ -39,6 +39,19 @@ public class CodeSketch {
         frame.setLocation(screenSize.width/2-frame.getWidth()/2,screenSize.height/2-frame.getHeight()/2);
     }
 
+    public static Dimension getFrameSize()
+    {
+        return getFrameSize(0.8);
+    }
+
+    public static Dimension getFrameSize(double percent)
+    {
+        Dimension screenSize =Toolkit.getDefaultToolkit().getScreenSize();
+        int width = (int) (screenSize.width *percent);
+        int height = (int) (screenSize.height * percent);
+        return new Dimension(width,height);
+    }
+
     public static  void info(String msg)
     {
         getLogger().info(msg);

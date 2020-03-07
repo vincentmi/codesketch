@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -123,7 +124,7 @@ public class Loader {
                     info = mapper.readValue(infoFile, TemplateInfo.class);
                     info.setPath(templatePath);
                     infos.add(info);
-                    CodeSketch.info(info.toJson());
+                    //CodeSketch.info(info.toJson());
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -179,6 +180,13 @@ public class Loader {
             e.printStackTrace();
             CodeSketch.error(e.getMessage());
         }
+    }
+
+    public static  String getResource(String file)
+    {
+        ClassLoader classLoader = CodeSketch.class.getClassLoader();
+        URL resource = classLoader.getResource(file);
+        return  resource.getPath();
     }
 
 

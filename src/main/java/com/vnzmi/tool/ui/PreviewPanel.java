@@ -9,9 +9,8 @@ import org.fife.ui.rsyntaxtextarea.Theme;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
+import javax.swing.plaf.basic.BasicTabbedPaneUI;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,7 +39,8 @@ public class PreviewPanel {
 
         JFrame frame = new JFrame();
         frame.setLayout(new BorderLayout());
-        frame.setSize(new Dimension(600,600));
+        frame.setSize(CodeSketch.getFrameSize(0.7));
+        CodeSketch.center(frame);
         frame.add(tab,BorderLayout.CENTER);
         frame.setVisible(true);
     }

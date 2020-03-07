@@ -89,7 +89,7 @@ public class TemplateView {
         int rowHeight = 30,northStart = 10,rowIndex = 0;
         SpringLayout.Constraints textConstraints,labelConstraints,tipsConstraints;
         String value;
-        textFields = new ArrayList<JTextField>();
+        textFields = new ArrayList<>();
         for(int i = 0 ;i<valueDefines.length;i++)
         {
             templateVariable = valueDefines[i];
@@ -136,25 +136,18 @@ public class TemplateView {
         JPanel pButton = new JPanel(new GridLayout(1, 2, 5, 5));
         JButton btnSave = new JButton("Save");
         JButton btnCancel = new JButton("Cancel");
-        btnCancel.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                frame.setVisible(false);
-            }
-        });
+        btnCancel.addActionListener(e -> frame.setVisible(false));
 
-        btnSave.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                TemplateVariable[] variables = templateInfo.getVariables();
-                for(int i = 0 ;i<textFields.size();i++)
-                {
-                    TemplateVariable info = variables[i];
-                    JTextField field = textFields.get(i);
-                    templateValue.put(info.getName(),field.getText());
-                }
-                Loader.getInstance().saveTemplateValues();
-                frame.setVisible(false);
+        btnSave.addActionListener(e -> {
+            TemplateVariable[] variables = templateInfo.getVariables();
+            for(int i = 0 ;i<textFields.size();i++)
+            {
+                TemplateVariable info = variables[i];
+                JTextField field = textFields.get(i);
+                templateValue.put(info.getName(),field.getText());
             }
+            Loader.getInstance().saveTemplateValues();
+            frame.setVisible(false);
         });
 
         pButton.add(btnSave);
@@ -198,16 +191,14 @@ public class TemplateView {
 
         JButton btnOpen = new JButton("Open File");
 
-        btnOpen.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                Desktop desktop = Desktop.getDesktop();
-                File dirToOpen = null;
-                try {
-                    dirToOpen = new File(templateInfo.getPath());
-                    desktop.open(dirToOpen);
-                } catch (IOException e1) {
-                    CodeSketch.error(e1.getMessage());
-                }
+        btnOpen.addActionListener(e -> {
+            Desktop desktop = Desktop.getDesktop();
+            File dirToOpen = null;
+            try {
+                dirToOpen = new File(templateInfo.getPath());
+                desktop.open(dirToOpen);
+            } catch (IOException e1) {
+                CodeSketch.error(e1.getMessage());
             }
         });
 
