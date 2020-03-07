@@ -1,5 +1,7 @@
 package com.vnzmi.tool.model;
 
+import com.vnzmi.tool.StringUtil;
+
 public class FieldInfo {
     private String name;
     private String defaultValue;
@@ -99,5 +101,10 @@ public class FieldInfo {
 
     public void setComment(String comment) {
         this.comment = comment;
+    }
+
+    public String getNameCamel()
+    {
+        return StringUtil.toCamel(getName());
     }
 }

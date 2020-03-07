@@ -26,6 +26,10 @@ public class MainFrame extends JFrame {
     private JComboBox comboboxSchema = null;
     private JScrollPane centerPanel = null;
     private JTextArea console = null;
+    private JComboBox comboboxTemp;
+
+
+    private HashMap<String,TableInfo> tablesInfos ;
 
     private JFrame main;
 
@@ -83,6 +87,11 @@ public class MainFrame extends JFrame {
         main = this;
 
 
+    }
+
+    public TemplateInfo getSelectedTemplateInfo()
+    {
+        return Loader.getInstance().getTemplateInfos().get(comboboxTemp.getSelectedIndex());
     }
 
 
@@ -143,7 +152,7 @@ public class MainFrame extends JFrame {
 
         JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         tempPanel.add(new JLabel("Template:"));
-        final JComboBox comboboxTemp = new JComboBox();
+        comboboxTemp = new JComboBox();
         ArrayList<TemplateInfo> templateInfos = Loader.getInstance().getTemplateInfos();
         for (int i = 0; i < templateInfos.size(); i++) {
             comboboxTemp.addItem(templateInfos.get(i).getName());
@@ -261,11 +270,6 @@ public class MainFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 TemplateInfo info = Loader.getInstance().getTemplateInfos().get(comboboxTemp.getSelectedIndex());
                 Generator gen = new Generator(info);
-                HashMap<String,Object> data = new HashMap<String, Object>() {{
-                    put("name", "miwenshu");
-                }};
-                CodeSketch.info(gen.perform("info.json", data));
-                CodeSketch.info(gen.performString("xxx${name}n , ${name},12312", data));
 
             }
         });
@@ -338,9 +342,9 @@ public class MainFrame extends JFrame {
         CodeSketch.info("current db = " + profile);
 
         ProfileConnection pc = ProfileConnection.create(profile);
-        HashMap<String, TableInfo> tables;
+
         try {
-            tables = pc.getTableInfos();
+            tablesInfos = pc.getTableInfos();
             centerPanel.removeAll();
 
             centerPanel.setVerticalScrollBar(new JScrollBar());
@@ -349,7 +353,7 @@ public class MainFrame extends JFrame {
 
             panel.setBackground(Color.white);
 
-            Iterator<TableInfo> it = tables.values().iterator();
+            Iterator<TableInfo> it = tablesInfos.values().iterator();
             TableInfo tableInfo;
             GridLayout panelLayout = new GridLayout(0, 2, 3, 3);
             panel.setLayout(panelLayout);
@@ -357,7 +361,7 @@ public class MainFrame extends JFrame {
                 tableInfo = it.next();
                 panel.add(new TablePanel(tableInfo).getPanel());
             }
-            CodeSketch.info(tables.size() + " tables loaded");
+            CodeSketch.info(tablesInfos.size() + " tables loaded");
             panel.setVisible(true);
             int rows = panelLayout.getRows();
             panel.setAutoscrolls(false);

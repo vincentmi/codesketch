@@ -1,21 +1,21 @@
 package com.vnzmi.tool.model;
 
 import com.vnzmi.tool.CodeSketch;
+import com.vnzmi.tool.Loader;
+import com.vnzmi.tool.StringUtil;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import org.apache.commons.codec.digest.DigestUtils;
-import sun.security.krb5.Config;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.security.MessageDigest;
 import java.util.HashMap;
-import java.util.Random;
+import java.util.Map;
 
 /**
  * 代码生成器
@@ -25,6 +25,8 @@ public class Generator {
 
     private Configuration cfgString;
     private TemplateInfo templateInfo;
+
+    private HashMap<String,Object> baseData;
     public Generator(TemplateInfo templateInfo)
     {
         this.templateInfo = templateInfo;
@@ -37,6 +39,7 @@ public class Generator {
         try {
             cfg.setDirectoryForTemplateLoading(templateHome);
             cfg.setDefaultEncoding("UTF-8");
+
             cfg.setTemplateExceptionHandler(TemplateExceptionHandler.DEBUG_HANDLER);
             cfg.setLogTemplateExceptions(false);
             cfg.setWrapUncheckedExceptions(true);
@@ -48,10 +51,21 @@ public class Generator {
             CodeSketch.getMainFrame().showMessage(e.getMessage());
         }
 
-
+        //模板数据
+        baseData = new HashMap<String,Object>();
+        Setting setting = Loader.getInstance().getSetting();
+        Map<String,String> values = Loader.getInstance().getTemplateValues().getOrDefault(templateInfo.getName() , new HashMap<String,String>());
+        baseData.put("projectPath",StringUtil.rtrim(setting.getProject().trim(),"/\\"));
+        baseData.putAll(values);
     }
 
-    public String  perform(String template , HashMap<String,Object> data)
+    /**
+     * perform a template
+     * @param template
+     * @param data
+     * @return
+     */
+    private String  process(String template , HashMap<String,Object> data)
     {
         try {
             Template temp = cfg.getTemplate(template);
@@ -69,7 +83,13 @@ public class Generator {
 
     }
 
-    public String performString(String templateString , HashMap<String,Object> data)
+    /**
+     * replace variable from string
+     * @param templateString
+     * @param data
+     * @return
+     */
+    private String processString(String templateString , HashMap<String,Object> data)
     {
         String templateName = DigestUtils.md2Hex(templateString);
         try {
@@ -85,5 +105,37 @@ public class Generator {
             CodeSketch.getMainFrame().showMessage(e.getMessage());
         }
         return "";
+    }
+
+    public CodePack[]  build(TableInfo tableInfo)
+    {
+        TemplateFile[] files = templateInfo.getFiles();
+        HashMap<String,Object> tData = new HashMap<String,Object>();
+        tData.putAll(baseData);
+
+        tData.put("table",tableInfo.getName());
+        tData.put("modelCamel", StringUtil.toCamel(tableInfo.getName()));
+        tData.put("model", StringUtil.toCamelUpper(tableInfo.getName()));
+        tData.put("modelLine", StringUtil.toLine((String)tData.get("modelCamel")));
+        tData.put("fields",tableInfo.getFields());
+        tData.put("schema",tableInfo.getSchema());
+
+        CodePack[] codePacks = new CodePack[files.length];
+
+        for(int i = 0 ;i<files.length;i++)
+        {
+            TemplateFile fileInfo = files[i];
+            String name = processString(fileInfo.getName() , tData);
+
+            String saveTo = (String)tData.get("projectPath")
+                    +File.separator+ processString(fileInfo.getSaveTo() , tData)
+                    +File.separator+name;
+            String content = process(fileInfo.getFile() , tData);
+            codePacks[i] = new CodePack(name,saveTo,content);
+
+            System.out.println(name);
+        }
+
+        return codePacks;
     }
 }

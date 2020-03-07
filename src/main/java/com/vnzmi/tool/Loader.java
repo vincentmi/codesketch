@@ -3,6 +3,7 @@ package com.vnzmi.tool;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vnzmi.tool.model.Setting;
+import com.vnzmi.tool.model.TableInfo;
 import com.vnzmi.tool.model.TemplateInfo;
 
 import java.io.File;
@@ -18,6 +19,7 @@ public class Loader {
     private  String rootPath = null;
     private  Setting setting = null;
     private Map<String,Map<String,String>> templateValues = null;
+    private TableInfo[] tableInfos;
 
     private ArrayList<TemplateInfo> templateInfos;
     public static Loader getInstance()

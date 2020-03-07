@@ -38,7 +38,7 @@ public class TablePanel {
         btnPreview.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                new PreviewPanel();
+                new PreviewPanel(tableInfo);
             }
         });
         buttonPanel.add(btnPreview);
