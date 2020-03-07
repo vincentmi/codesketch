@@ -1,7 +1,4 @@
 package com.vnzmi.tool.ui;
-
-import com.apple.eawt.AboutHandler;
-import com.apple.eawt.AppEvent;
 import com.apple.eawt.Application;
 import com.vnzmi.tool.CodeSketch;
 import com.vnzmi.tool.Loader;
@@ -11,8 +8,6 @@ import sun.plugin2.util.SystemUtil;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.image.ImageObserver;
-import java.awt.image.ImageProducer;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
@@ -24,10 +19,7 @@ import java.util.Iterator;
 
 public class MainFrame extends JFrame {
 
-    private JMenuBar mainMenubar = null;
-
     private JPanel toolbarLeftPanel = null;
-    private JPanel toolbarRightPanel = null;
     private JComboBox comboboxProfile = null;
     private JComboBox comboboxSchema = null;
     private JPanel centerPanel = null;
@@ -88,7 +80,9 @@ public class MainFrame extends JFrame {
         JPanel flag = new JPanel(new GridLayout(1,1,5,5));
         flag.setBackground(null);
         JLabel flagText = new JLabel("Please select schema then press refresh");
-        flagText.setFont(new java.awt.Font("Dialog", 1, 18));
+        Font font = new Font("Dialog", 1, 18);
+        flagText.setFont(font);
+        flagText.setForeground(Color.lightGray);
         flag.add(flagText);
         centerPanel = new JPanel(new FlowLayout());
 
@@ -142,7 +136,8 @@ public class MainFrame extends JFrame {
 
     public void showAboutFrame()
     {
-        showMessage("CodeSketch by Vincent Mi ");
+        new AboutUs(this);
+        //showMessage("CodeSketch by Vincent Mi http://vnzmi.com ");
     }
 
     public JMenu createHelpMenu() {

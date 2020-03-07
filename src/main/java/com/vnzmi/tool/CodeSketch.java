@@ -33,7 +33,7 @@ public class CodeSketch {
         return logger;
     }
 
-    public static void  center(JFrame frame)
+    public static void  center(Window frame)
     {
         Dimension screenSize =Toolkit.getDefaultToolkit().getScreenSize();
         frame.setLocation(screenSize.width/2-frame.getWidth()/2,screenSize.height/2-frame.getHeight()/2);
