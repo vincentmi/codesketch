@@ -348,7 +348,11 @@ public class MainFrame extends JFrame {
         //toolbar.setPreferredSize(new Dimension(CodeSketch.getMainFrame().getWidth() - 10,30));
 
         toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT));
-        toolbar.add(new JCheckBox("All tables"));
+        JCheckBox chkAllTable = new JCheckBox("All tables");
+        chkAllTable.addActionListener( e -> {
+
+        });
+        toolbar.add(chkAllTable);
         toolbar.add(new JCheckBox("Inverse Tables"));
 
         TemplateInfo templateInfo = CodeSketch.getMainFrame().getSelectedTemplateInfo();

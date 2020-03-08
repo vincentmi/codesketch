@@ -8,6 +8,7 @@ Vincent Mi (miwenshu@gmail.com)
 
 ## 模板变量
 
+模板使用 FreeMarker 语法请参考参考 [http://freemarker.foofun.cn/ref.html](http://freemarker.foofun.cn/ref.html)
 
 #### 基本变量
 | 变量 | 类型 | 示例 | 说明 |
