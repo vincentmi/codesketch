@@ -135,7 +135,11 @@ public class MainFrame extends JFrame {
     public JMenu createFileMenu() {
         JMenu menuFile = new JMenu("Setting");
         menuFile.add(new JMenuItem("Preferences"));
-        menuFile.add(new JMenuItem("Database Profile"));
+        JMenuItem menuDatabaseProfile = new JMenuItem("Database Profile");
+        menuDatabaseProfile.addActionListener(e -> {
+            new ProfileListView();
+        });
+        menuFile.add(menuDatabaseProfile);
         menuFile.add(new JMenuItem("Templates"));
         return menuFile;
     }

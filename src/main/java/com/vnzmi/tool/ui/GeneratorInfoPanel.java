@@ -78,11 +78,8 @@ public class GeneratorInfoPanel {
         for (int i = 0; i < max; i++) {
 
             TablePanel p = tables.get(i);
-
             if (p.getTableCheckbox().isSelected()) {
-
                 CodePack[] codes = generator.build(p.getTableInfo(),getSelectedOptions(p.getOptions()));
-
                 for (int j = 0; j < codes.length; j++) {
                     codes[j].saveFile();
                 }

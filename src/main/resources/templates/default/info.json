@@ -2,7 +2,7 @@
   "name" : "default" ,
   "url" : "http://vnzmi.com/codesketch/default.zip",
   "author" : "${name}",
-  "description":"spring 默认的框架模板",
+  "description":"code template sample",
   "variables":[
     {
       "name" : "basePackage",
