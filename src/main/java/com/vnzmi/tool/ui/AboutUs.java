@@ -28,7 +28,7 @@ public class AboutUs {
         topPanel.add(logoLabel);
 
 
-        JDialog dialog = new JDialog(parent);
+        JDialog dialog = new JDialog(parent,true);
         SpringLayout sl = new SpringLayout();
         dialog.setLayout(sl);
 

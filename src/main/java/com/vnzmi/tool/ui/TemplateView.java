@@ -11,8 +11,6 @@ import javax.swing.text.Document;
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,7 +25,7 @@ public class TemplateView {
     private Map<String,String> templateValue;
     private ArrayList<JTextField> textFields;
 
-    private JFrame frame;
+    private JDialog frame;
 
 
     public TemplateView(int index) {
@@ -41,8 +39,8 @@ public class TemplateView {
         }
     }
 
-    public void show() {
-        frame = new JFrame();
+    public void show(JFrame parent) {
+        frame = new JDialog(parent,true);
         frame.setLayout(new BorderLayout());
         frame.setSize(new Dimension(650, 600));
         frame.setResizable(false);

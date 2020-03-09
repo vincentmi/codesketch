@@ -7,15 +7,13 @@ import com.vnzmi.tool.model.TemplateInfo;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
+import java.util.HashMap;
 
 public class TablePanel {
     private TableInfo tableInfo;
     private JPanel tablePanel;
-    private JCheckBox tableCheckBox ;
+    private JCheckBox table ;
+    private HashMap<String,JCheckBox>  options;
     public TablePanel(TableInfo tableinfo)
     {
         this.tableInfo = tableinfo;
@@ -28,9 +26,10 @@ public class TablePanel {
 
         JPanel titlePanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 3, 3));
 
-        tableCheckBox = new JCheckBox(tableInfo.getName());
+        table = new JCheckBox(tableInfo.getName());
+        options = new HashMap<>();
 
-        titlePanel.add(tableCheckBox);
+        titlePanel.add(table);
         titlePanel.setBackground(null);
         tablePanel.add(titlePanel);
 
@@ -41,7 +40,9 @@ public class TablePanel {
         TemplateFile[] files = templateInfo.getFiles();
         for(int i = 0 ;i<files.length ;i++)
         {
-            checkboxPanel.add(new JCheckBox(files[i].getFile()));
+            JCheckBox option = new JCheckBox(files[i].getFile());
+            options.put(files[i].getFile() , option);
+            checkboxPanel.add(option);
         }
         tablePanel.add(checkboxPanel);
 
@@ -52,7 +53,21 @@ public class TablePanel {
         buttonPanel.add(btnPreview);
         buttonPanel.add(new JButton("Generate"));
         tablePanel.add(buttonPanel);
-        tablePanel.addMouseListener(new TablePanelMouseListener(tableCheckBox));
+        tablePanel.addMouseListener(new TablePanelMouseListener(table));
+    }
+
+    public JCheckBox getTableCheckbox()
+    {
+        return table;
+    }
+
+    public TableInfo getTableInfo(){
+        return tableInfo;
+    }
+
+    public HashMap<String,JCheckBox> getOptions()
+    {
+        return options;
     }
 
     public JPanel getPanel()

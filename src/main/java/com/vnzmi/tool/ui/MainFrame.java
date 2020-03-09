@@ -1,4 +1,5 @@
 package com.vnzmi.tool.ui;
+
 import com.apple.eawt.Application;
 import com.vnzmi.tool.CodeSketch;
 import com.vnzmi.tool.Loader;
@@ -26,15 +27,15 @@ public class MainFrame extends JFrame {
     private JTextArea console = null;
     private JComboBox comboboxTemp;
 
+    private HashMap<String, TableInfo> tablesInfos;
 
-    private HashMap<String,TableInfo> tablesInfos ;
+    private ArrayList<TablePanel> _tablePanels;
 
     private JFrame main;
 
     public MainFrame() {
         init();
     }
-
 
 
     public void init() {
@@ -47,11 +48,12 @@ public class MainFrame extends JFrame {
 
         setIconImage(icon.getImage());
 
-        if(SystemUtil.getOSType() == SystemUtil.MACOSX)
-        {
+        if (SystemUtil.getOSType() == SystemUtil.MACOSX) {
             Application application = Application.getApplication();
             application.setDockIconImage(icon.getImage());
-            application.setAboutHandler(e -> {showAboutFrame();});
+            application.setAboutHandler(e -> {
+                showAboutFrame();
+            });
         }
 
         setSize(CodeSketch.getFrameSize());
@@ -77,7 +79,7 @@ public class MainFrame extends JFrame {
         consolePanel.getViewport().add(console);
         add(consolePanel, BorderLayout.SOUTH);
 
-        JPanel flag = new JPanel(new GridLayout(1,1,5,5));
+        JPanel flag = new JPanel(new GridLayout(1, 1, 5, 5));
         flag.setBackground(null);
         JLabel flagText = new JLabel("Please select schema then press refresh");
         Font font = new Font("Dialog", 1, 18);
@@ -88,7 +90,7 @@ public class MainFrame extends JFrame {
 
         centerPanel.setBackground(Color.WHITE);
 
-        centerPanel.add(flag,BorderLayout.CENTER);
+        centerPanel.add(flag, BorderLayout.CENTER);
 
         add(centerPanel, BorderLayout.CENTER);
 
@@ -102,8 +104,11 @@ public class MainFrame extends JFrame {
 
     }
 
-    public TemplateInfo getSelectedTemplateInfo()
-    {
+    public ArrayList<TablePanel> getTablePanels() {
+        return _tablePanels;
+    }
+
+    public TemplateInfo getSelectedTemplateInfo() {
         return Loader.getInstance().getTemplateInfos().get(comboboxTemp.getSelectedIndex());
     }
 
@@ -134,8 +139,7 @@ public class MainFrame extends JFrame {
         return menuFile;
     }
 
-    public void showAboutFrame()
-    {
+    public void showAboutFrame() {
         new AboutUs(this);
         //showMessage("CodeSketch by Vincent Mi http://vnzmi.com ");
     }
@@ -154,7 +158,6 @@ public class MainFrame extends JFrame {
         menu.add(aboutItem);
         return menu;
     }
-
 
 
     private JPanel getMainToolbar() {
@@ -178,7 +181,7 @@ public class MainFrame extends JFrame {
         }
         tempPanel.add(comboboxTemp);
         JButton tempButton = new JButton("Variables");
-        tempButton.addActionListener(e -> new TemplateView(comboboxTemp.getSelectedIndex()).show());
+        tempButton.addActionListener(e -> new TemplateView(comboboxTemp.getSelectedIndex()).show(main));
         tempPanel.add(tempButton);
 
         JPanel projectPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -217,7 +220,7 @@ public class MainFrame extends JFrame {
         comboboxTemp.addItemListener(e -> {
             if (e.getStateChange() == ItemEvent.SELECTED) {
                 Setting setting12 = Loader.getInstance().getSetting();
-                String selected = (String)comboboxTemp.getItemAt(comboboxTemp.getSelectedIndex());
+                String selected = (String) comboboxTemp.getItemAt(comboboxTemp.getSelectedIndex());
                 setting12.setTemplate(selected);
             }
         });
@@ -277,8 +280,7 @@ public class MainFrame extends JFrame {
 
         JButton generateButton = new JButton("Generate");
         generateButton.addActionListener(e -> {
-            TemplateInfo info = Loader.getInstance().getTemplateInfos().get(comboboxTemp.getSelectedIndex());
-            Generator gen = new Generator(info);
+            new GeneratorInfoPanel(this).show();
 
         });
         rightPanel.add(generateButton);
@@ -286,7 +288,7 @@ public class MainFrame extends JFrame {
         //JToolBar toolbar = new JToolBar();
         JPanel toolbar = new JPanel();
         //toolbar.setFloatable(false);
-        toolbar.setLayout(new GridLayout(4,1,3,3));
+        toolbar.setLayout(new GridLayout(4, 1, 3, 3));
         toolbar.add(toolbarLeftPanel);
         toolbar.add(tempPanel);
         toolbar.add(projectPanel);
@@ -341,26 +343,76 @@ public class MainFrame extends JFrame {
         }
     }
 
-    public JPanel getTableToolbar()
-    {
+    public JPanel getTableToolbar() {
         JPanel toolbar = new JPanel();
         //tablePanel.setBackground(Color.white);
         //toolbar.setPreferredSize(new Dimension(CodeSketch.getMainFrame().getWidth() - 10,30));
 
         toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT));
         JCheckBox chkAllTable = new JCheckBox("All tables");
-        chkAllTable.addActionListener( e -> {
+        chkAllTable.addItemListener(e -> {
+            if (_tablePanels != null) {
+                if (e.getStateChange() == ItemEvent.SELECTED) {
+                    for (int i = 0, max = _tablePanels.size(); i < max; i++) {
+                        TablePanel panel = _tablePanels.get(i);
+                        panel.getTableCheckbox().setSelected(true);
+                    }
+                } else {
+                    for (int i = 0, max = _tablePanels.size(); i < max; i++) {
+                        TablePanel panel = _tablePanels.get(i);
+                        panel.getTableCheckbox().setSelected(false);
+                    }
+                }
 
+            }
         });
         toolbar.add(chkAllTable);
-        toolbar.add(new JCheckBox("Inverse Tables"));
+
+        JCheckBox inverseAllTable = new JCheckBox("Inverse Tables");
+        toolbar.add(inverseAllTable);
+        inverseAllTable.addItemListener(e -> {
+            if (_tablePanels != null) {
+                for (int i = 0, max = _tablePanels.size(); i < max; i++) {
+                    TablePanel panel = _tablePanels.get(i);
+                    boolean newCheck = panel.getTableCheckbox().isSelected();
+                    panel.getTableCheckbox().setSelected(!newCheck);
+                }
+
+            }
+        });
 
         TemplateInfo templateInfo = CodeSketch.getMainFrame().getSelectedTemplateInfo();
         TemplateFile[] files = templateInfo.getFiles();
-        for(int i = 0 ;i<files.length ;i++)
-        {
-            toolbar.add(new JCheckBox(files[i].getFile()));
-            toolbar.add(new JCheckBox("Inverse "+ files[i].getFile()));
+        for (int i = 0; i < files.length; i++) {
+            JCheckBox allChk = new JCheckBox(files[i].getFile());
+            JCheckBox invChk = new JCheckBox("Inverse " + files[i].getFile());
+            toolbar.add(allChk);
+            toolbar.add(invChk);
+            allChk.addItemListener(e -> {
+                if (_tablePanels != null) {
+                    if (e.getStateChange() == ItemEvent.SELECTED) {
+                        for (int j = 0, max = _tablePanels.size(); j < max; j++) {
+                            TablePanel panel = _tablePanels.get(j);
+                            panel.getOptions().get(allChk.getText()).setSelected(true);
+                        }
+                    } else {
+                        for (int j = 0, max = _tablePanels.size(); j < max; j++) {
+                            TablePanel panel = _tablePanels.get(j);
+                            panel.getOptions().get(allChk.getText()).setSelected(false);
+                        }
+                    }
+                }
+            });
+
+            invChk.addItemListener(e -> {
+                if (_tablePanels != null) {
+                    for (int j = 0, max = _tablePanels.size(); j < max; j++) {
+                        TablePanel panel = _tablePanels.get(j);
+                        JCheckBox box = panel.getOptions().get(allChk.getText());
+                        box.setSelected(!box.isSelected());
+                    }
+                }
+            });
         }
 
         return toolbar;
@@ -378,8 +430,9 @@ public class MainFrame extends JFrame {
         ProfileConnection pc = ProfileConnection.create(profile);
         centerPanel.removeAll();
         centerPanel.setLayout(new BorderLayout());
+        centerPanel.add(getTableToolbar(), BorderLayout.SOUTH);
 
-        centerPanel.add(getTableToolbar(),BorderLayout.SOUTH);
+        _tablePanels = new ArrayList<TablePanel>();
 
         JScrollPane tableList = new JScrollPane();
         tableList.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -402,14 +455,19 @@ public class MainFrame extends JFrame {
             int i = 0;
             while (it.hasNext()) {
                 tableInfo = it.next();
-                JPanel tablePanel = new TablePanel(tableInfo).getPanel();
-                panel.add(tablePanel);
-                constraints = panelLayout.getConstraints(tablePanel);
-                constraints.setConstraint(SpringLayout.WEST,Spring.constant(10));
-                constraints.setConstraint(SpringLayout.NORTH,Spring.constant(30*i));
+                TablePanel tp = new TablePanel(tableInfo);
+                _tablePanels.add(tp);
+
+                JPanel tpPanel = tp.getPanel();
+
+
+                panel.add(tpPanel);
+                constraints = panelLayout.getConstraints(tpPanel);
+                constraints.setConstraint(SpringLayout.WEST, Spring.constant(10));
+                constraints.setConstraint(SpringLayout.NORTH, Spring.constant(30 * i));
                 i++;
             }
-            panel.setPreferredSize(new Dimension(main.getWidth() , i*30));
+            panel.setPreferredSize(new Dimension(main.getWidth(), i * 30));
             CodeSketch.info(tablesInfos.size() + " tables loaded");
             panel.setVisible(true);
             panel.setAutoscrolls(false);

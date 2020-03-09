@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 /**
@@ -107,7 +108,11 @@ public class Generator {
         return "";
     }
 
-    public CodePack[]  build(TableInfo tableInfo)
+    public CodePack[]  build(TableInfo tableInfo){
+        return build(tableInfo,null);
+    }
+
+    public CodePack[]  build(TableInfo tableInfo , HashSet<String> need)
     {
         TemplateFile[] files = templateInfo.getFiles();
         HashMap<String,Object> tData = new HashMap<String,Object>();
@@ -127,13 +132,15 @@ public class Generator {
             TemplateFile fileInfo = files[i];
             String name = processString(fileInfo.getName() , tData);
 
-            String saveTo = (String)tData.get("projectPath")
-                    +File.separator+ processString(fileInfo.getSaveTo() , tData)
-                    +File.separator+name;
-            String content = process(fileInfo.getFile() , tData);
-            codePacks[i] = new CodePack(name,saveTo,content);
-
-            System.out.println(name);
+            if(need == null || need.contains(fileInfo.getFile()))
+            {
+                String saveTo = (String)tData.get("projectPath")
+                        +File.separator+ processString(fileInfo.getSaveTo() , tData)
+                        +File.separator+name;
+                String content = process(fileInfo.getFile() , tData);
+                codePacks[i] = new CodePack(name,saveTo,content);
+                //System.out.println(name);
+            }
         }
 
         return codePacks;
