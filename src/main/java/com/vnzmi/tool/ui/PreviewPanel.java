@@ -109,18 +109,7 @@ public class PreviewPanel {
         statusPanel.add(saveToLabel , BorderLayout.CENTER);
         JButton btn = new JButton("Save");
         btn.addActionListener(e -> {
-            try {
-                File file = new File(codePack.getSaveTo());
-                File dir = new File(file.getParent());
-                if(!dir.exists()){
-                    dir.mkdirs();
-                }
-                FileOutputStream fos = new FileOutputStream(file);
-                fos.write(codePack.getContent().getBytes("UTF-8"));
-                CodeSketch.info("Saved -  " + codePack.getSaveTo());
-            }catch (IOException e1){
-                CodeSketch.error(e1.getMessage());
-            }
+            codePack.saveFile();
         });
         statusPanel.add(btn,BorderLayout.EAST);
         cp.add(statusPanel,BorderLayout.SOUTH);

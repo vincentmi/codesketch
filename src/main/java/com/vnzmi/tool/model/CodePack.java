@@ -1,5 +1,11 @@
 package com.vnzmi.tool.model;
 
+import com.vnzmi.tool.CodeSketch;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 public class CodePack {
     private String name ;
     private String saveTo;
@@ -10,6 +16,24 @@ public class CodePack {
         this.name = name ;
         this.saveTo = saveTo;
         this.content = content;
+    }
+
+    public boolean saveFile()
+    {
+        try {
+            File file = new File(getSaveTo());
+            File dir = new File(file.getParent());
+            if(!dir.exists()){
+                dir.mkdirs();
+            }
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(getContent().getBytes("UTF-8"));
+            CodeSketch.info("Saved -  " + getSaveTo());
+            return true;
+        }catch (IOException e1){
+            CodeSketch.error(e1.getMessage());
+            return false;
+        }
     }
 
     public String getName() {

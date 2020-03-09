@@ -73,6 +73,7 @@ public class MainFrame extends JFrame {
         console.setEditable(false);
         console.setAutoscrolls(true);
 
+
         JScrollPane consolePanel = new JScrollPane();
         consolePanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         consolePanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
