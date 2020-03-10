@@ -7,7 +7,7 @@ Vincent Mi (miwenshu@gmail.com)
 
 ## 使用
 
-将模板文件拷贝到 ```~/.codesketch```
+将模板文件拷贝到 ```~/.codesketch/templates```下.
 
 
 ## 模板变量
