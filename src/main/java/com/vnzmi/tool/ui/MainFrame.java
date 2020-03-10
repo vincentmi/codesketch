@@ -134,7 +134,7 @@ public class MainFrame extends JFrame {
 
     public JMenu createFileMenu() {
         JMenu menuFile = new JMenu("Setting");
-        menuFile.add(new JMenuItem("Preferences"));
+        //menuFile.add(new JMenuItem("Preferences"));
         JMenuItem menuDatabaseProfile = new JMenuItem("Database Profile");
         menuDatabaseProfile.addActionListener(e -> {
             new ProfileListView();
@@ -322,7 +322,7 @@ public class MainFrame extends JFrame {
 
     synchronized public void reloadSchemaSelection() {
         comboboxSchema.removeAllItems();
-        Profile profile = Loader.getInstance().getSetting().getProfiles().get(comboboxProfile.getSelectedIndex());
+        Profile profile = Loader.getInstance().loadSetting().getSetting().getProfiles().get(comboboxProfile.getSelectedIndex());
         if (profile == null) {
             showMessage("profile not selected");
         } else {

@@ -74,7 +74,7 @@ public class Loader {
         }
     }
 
-    private void loadSetting()
+    public Loader loadSetting()
     {
         Setting loadedSetting = new Setting();
         try {
@@ -90,6 +90,7 @@ public class Loader {
             CodeSketch.error(e.getMessage());
             CodeSketch.getMainFrame().showMessage(e.getMessage());
         }
+        return this;
     }
 
     private void loadTemplateInfos()
