@@ -51,6 +51,11 @@ public class CodeSketch {
         return new Dimension(width,height);
     }
 
+    public static void info(int msg)
+    {
+        info(Integer.toString(msg));
+    }
+
     public static  void info(String msg)
     {
         getLogger().info(msg);

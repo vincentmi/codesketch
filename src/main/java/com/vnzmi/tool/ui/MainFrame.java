@@ -1,16 +1,18 @@
 package com.vnzmi.tool.ui;
 
-import com.apple.eawt.Application;
+
 import com.vnzmi.tool.CodeSketch;
 import com.vnzmi.tool.Loader;
 import com.vnzmi.tool.model.*;
-import sun.plugin2.util.SystemUtil;
+
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -48,13 +50,15 @@ public class MainFrame extends JFrame {
 
         setIconImage(icon.getImage());
 
+        /*System.out.println(SystemUtil.getOSType());
+
         if (SystemUtil.getOSType() == SystemUtil.MACOSX) {
             Application application = Application.getApplication();
             application.setDockIconImage(icon.getImage());
             application.setAboutHandler(e -> {
                 showAboutFrame();
             });
-        }
+        }*/
 
         setSize(CodeSketch.getFrameSize());
         setMinimumSize(new Dimension(400, 300));
@@ -137,10 +141,15 @@ public class MainFrame extends JFrame {
         //menuFile.add(new JMenuItem("Preferences"));
         JMenuItem menuDatabaseProfile = new JMenuItem("Database Profile");
         menuDatabaseProfile.addActionListener(e -> {
-            new ProfileListView();
+            new ProfileListView(main);
         });
         menuFile.add(menuDatabaseProfile);
-        menuFile.add(new JMenuItem("Templates"));
+
+        /*JMenuItem menuTemplate = new JMenuItem("Templates");
+        menuTemplate.addActionListener(e->{
+            new TemplateListView(main);
+        });
+        menuFile.add(menuTemplate);*/
         return menuFile;
     }
 
@@ -151,8 +160,33 @@ public class MainFrame extends JFrame {
 
     public JMenu createHelpMenu() {
         JMenu menu = new JMenu("Help");
-        menu.add(new JMenuItem("Document"));
-        menu.add(new JMenuItem("Homepage"));
+
+        JMenuItem docItem = new JMenuItem("Document");
+        docItem.addActionListener(e -> {
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                desktop.browse(new URI("https://github.com/vincentmi/codesketch"));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            } catch (URISyntaxException ex) {
+                ex.printStackTrace();
+            }
+        });
+        menu.add(docItem);
+
+
+        JMenuItem homeItem = new JMenuItem("Homepage");
+        homeItem.addActionListener(e -> {
+            Desktop desktop = Desktop.getDesktop();
+            try {
+                desktop.browse(new URI("http://vnzmi.com"));
+            } catch (IOException ex) {
+                ex.printStackTrace();
+            } catch (URISyntaxException ex) {
+                ex.printStackTrace();
+            }
+        });
+        menu.add(homeItem);
 
         JMenuItem aboutItem = new JMenuItem("About");
         aboutItem.addActionListener(new ActionListener() {

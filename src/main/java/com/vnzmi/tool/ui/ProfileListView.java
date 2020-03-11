@@ -27,8 +27,8 @@ public class ProfileListView {
 
     JList<String> profileSelector;
 
-    public ProfileListView() {
-        dialog = new JDialog();
+    public ProfileListView(Window parent) {
+        dialog = new JDialog(parent);
         dialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
         dialog.setTitle("Profile setting");
