@@ -3,17 +3,21 @@ package com.vnzmi.tool.model;
 import com.vnzmi.tool.StringUtil;
 
 public class FieldInfo {
+
+
     private String name;
     private String defaultValue;
     private boolean nullable;
     private String dataType;
-    private int maxLength = -1 ;
+    private int maxLength = -1;
     private int numericPrecision = -1;
     private int numericScale = -1;
-    private String dataTypeStr ;
-    private String key  = "";
+    private String dataTypeStr;
+    private String key = "";
     private String extra = "";
     private String comment = "";
+
+    private FieldMapper mapper ;
 
     public String getName() {
         return name;
@@ -103,8 +107,50 @@ public class FieldInfo {
         this.comment = comment;
     }
 
-    public String getNameCamel()
-    {
+    public String getNameCamel() {
         return StringUtil.toCamel(getName());
     }
+
+    /**
+     * 是否自增
+     * @return
+     */
+    public boolean isAutoIncrement()
+    {
+        return getExtra().indexOf("auto_increment") != -1;
+    }
+
+    public String getMappedType()
+    {
+        return getMapper().getMappedType();
+    }
+
+    /**
+     * 是否必填
+     * @return
+     */
+    public boolean isRequired()
+    {
+        return !isNullable();
+    }
+
+    public String getGuessedTitle()
+    {
+        return getMapper().getGuessedTitle();
+    }
+
+    /**
+     * 获取数据类型映射
+     * @return
+     */
+    public FieldMapper getMapper()
+    {
+        if(mapper == null)
+        {
+            mapper = new FieldMapper(this);
+        }
+        return mapper;
+    }
+
+
 }

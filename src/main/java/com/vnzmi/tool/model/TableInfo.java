@@ -11,6 +11,8 @@ public class TableInfo {
     private String name;
     private ArrayList<FieldInfo> fields;
 
+    private ArrayList<FieldInfo> pk = null;
+
     public String getCatalog() {
         return catalog;
     }
@@ -43,10 +45,38 @@ public class TableInfo {
         this.fields = fields;
     }
 
+
     @Override
     public String toString()
     {
         return toJson();
+    }
+
+    private ArrayList<FieldInfo> getPrimaryKeys()
+    {
+        if(pk == null)
+        {
+            pk = new ArrayList<>();
+            for(int i = 0,max = fields.size();i<max;i++)
+            {
+                FieldInfo f = fields.get(i);
+                if(f.getKey().indexOf("PRI")!=-1)
+                {
+                    pk.add(f);
+                }
+            }
+        }
+        return pk;
+    }
+
+    public int getPrimaryKeyNum()
+    {
+        return getPrimaryKeys().size();
+    }
+
+    public FieldInfo getFirstPK()
+    {
+        return getPrimaryKeys().get(0);
     }
 
     public String toJson()
