@@ -11,9 +11,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /**
  * 代码生成器
@@ -117,7 +116,11 @@ public class Generator {
         HashMap<String, Object> tData = new HashMap<String, Object>();
         tData.putAll(baseData);
 
+        tData.put("TAG_LEFT", "<");
+        tData.put("TAG_RIGHT", ">");
+        tData.put("TIME" , new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S z").format(new Date()));
         tData.put("table", tableInfo.getName());
+        tData.put("tableInfo" , tableInfo);
         tData.put("modelCamel", StringUtil.toCamel(tableInfo.getName()));
         tData.put("model", StringUtil.toCamelUpper(tableInfo.getName()));
         tData.put("modelLine", StringUtil.toLine((String) tData.get("modelCamel")));

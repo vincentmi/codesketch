@@ -3,16 +3,19 @@ package com.vnzmi.tool.model.mapper;
 import com.vnzmi.tool.ArrayUtil;
 import com.vnzmi.tool.model.FieldInfo;
 
-public class FieldMapperCommon implements FieldMapper {
-    private FieldInfo info;
-    private String type ;
+public class FieldMapperPhp implements FieldMapper{
 
-    public FieldMapperCommon(FieldInfo info) {
+    private FieldInfo info;
+
+    private String type = null ;
+    private String getter = null;
+
+    public FieldMapperPhp(FieldInfo info)
+    {
         this.info = info;
     }
 
-    public String getType()
-    {
+    public  String getType() {
         if(type == null)
         {
             type = doGetType();
@@ -21,42 +24,58 @@ public class FieldMapperCommon implements FieldMapper {
     }
 
     private String doGetType() {
-        String mappedType;
+
+        String dataType;
         String orgDataType = info.getDataType();
         if (orgDataType.equals("enum")) {
-            mappedType = TYPE_ENUM;
+            dataType = "String";
         } else if (orgDataType.equals("year")) {
-            mappedType = TYPE_YEAR;
+            dataType = "Date";
         } else if (orgDataType.equals("time")) {
-            mappedType = TYPE_TIME;
+            dataType = "LocalTime";
         } else if (orgDataType.equals("timestamp")) {
-            mappedType = TYPE_TIMESTAMP;
+            dataType = "DateTime";
         } else if (orgDataType.equals("date")) {
-            mappedType = TYPE_DATE;
+            dataType = "Date";
         } else if (orgDataType.equals("datetime")) {
-            mappedType = TYPE_DATETIME;
+            dataType = "Date";
         } else if (ArrayUtil.inArray(orgDataType, new String[]{"tinyint", "mediumint", "smallint", "int", "bigint"})) {
-            mappedType = TYPE_INT;
+            dataType = "long";
         } else if (ArrayUtil.inArray(orgDataType, new String[]{"tinytext", "text", "mediumtext", "longtext"})) {
-            mappedType = TYPE_TEXT;
+            dataType = "String";
         } else if (ArrayUtil.inArray(orgDataType, new String[]{"decimal", "real", "double", "float"})) {
-            mappedType = TYPE_FLOAT;
+            dataType = "Double";
         } else if (ArrayUtil.inArray(orgDataType, new String[]{"tinyblob", "blob", "mediumblob", "longblob"})) {
-            mappedType = TYPE_BLOB;
+            dataType = "String";
         } else {
-            mappedType = TYPE_STRING;
+            //char varchar
+            dataType = "String";
         }
 
         if (orgDataType.equals("tinyint") && info.getNumericPrecision() == 1) {
-            mappedType = TYPE_BOOLEAN;
+            dataType = "boolean";
         }
-        return mappedType;
+        return dataType;
     }
 
-    @Override
-    public String getGetter() {
-        return "get"+info.getNameCamelUpper();
+    public String getGetter()
+    {
+        if(getType().equals("boolean"))
+        {
+            return "is"+info.getNameCamelUpper();
+        }else{
+            return "get"+info.getNameCamelUpper();
+        }
     }
-    public String getSetter() { return "set"+info.getNameCamelUpper(); }
-    public String[] getValidators(){return  new String[]{};}
+
+    public String getSetter()
+    {
+        return "set"+info.getNameCamelUpper();
+    }
+
+    public String[] getValidators()
+    {
+
+        return new String[]{};
+    }
 }

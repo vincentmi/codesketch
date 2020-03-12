@@ -1,10 +1,7 @@
 package com.vnzmi.tool.model;
 
 import com.vnzmi.tool.StringUtil;
-import com.vnzmi.tool.model.mapper.FieldMapper;
-import com.vnzmi.tool.model.mapper.FieldMapperCommon;
-import com.vnzmi.tool.model.mapper.FieldMapperJava;
-import com.vnzmi.tool.model.mapper.TitleResolver;
+import com.vnzmi.tool.model.mapper.*;
 
 import java.util.HashMap;
 
@@ -23,12 +20,13 @@ public class FieldInfo {
     private String extra = "";
     private String comment = "";
 
-    private HashMap<String,FieldMapper> mappers = new  HashMap<String,FieldMapper>();
+    private FieldInfo that;
+
+    private HashMap<String, Object> cache = new HashMap<String, Object>();
 
 
-    public FieldInfo()
-    {
-
+    public FieldInfo() {
+        that = this;
     }
 
     public String getName() {
@@ -66,6 +64,7 @@ public class FieldInfo {
     public long getMax() {
         return max;
     }
+
     public long getMin() {
         return min;
     }
@@ -73,6 +72,7 @@ public class FieldInfo {
     public void setMax(long max) {
         this.max = max;
     }
+
     public void setMin(long min) {
         this.min = min;
     }
@@ -128,6 +128,7 @@ public class FieldInfo {
     public String getNameCamel() {
         return StringUtil.toCamel(getName());
     }
+
     public String getNameCamelUpper() {
         return StringUtil.toCamelUpper(getName());
     }
@@ -140,6 +141,7 @@ public class FieldInfo {
     public boolean isAutoIncrement() {
         return getExtra().indexOf("auto_increment") != -1;
     }
+
     /**
      * 是否必填
      *
@@ -150,7 +152,25 @@ public class FieldInfo {
     }
 
     public String getGuessedTitle() {
-        return TitleResolver.getGuessedTitle(this);
+        return (String) getOrCreate("guess_title", () -> ExtraResolver.guessTitle(this));
+    }
+
+    public boolean isCreated() {
+        return (boolean) getOrCreate("guess_title", () -> ExtraResolver.guessIsCreated(this));
+    }
+
+    public boolean isUpdated() {
+        return (boolean) getOrCreate("guess_title", () -> ExtraResolver.guessIsUpdated(this));
+    }
+
+    private Object getOrCreate(String key, Closures closures) {
+        if (cache.containsKey(key)) {
+            return cache.get(key);
+        } else {
+            Object result = closures.execute();
+            cache.put(key, result);
+            return result;
+        }
     }
 
     /**
@@ -159,19 +179,15 @@ public class FieldInfo {
      * @return
      */
     public FieldMapper getMapper() {
-        if (!mappers.containsKey("normal")) {
-           FieldMapper  mapper = new FieldMapperCommon(this);
-           mappers.put("normal",mapper);
-        }
-        return mappers.get("normal");
+        return (FieldMapper) getOrCreate("mapper_normal", () -> new FieldMapperCommon(this));
     }
 
-    public FieldMapper getJavaMapper() {
-        if (!mappers.containsKey("java")) {
-            FieldMapper  mapper = new FieldMapperJava(this);
-            mappers.put("java",mapper);
-        }
-        return mappers.get("java");
+    public FieldMapper getJava() {
+        return (FieldMapper) getOrCreate("mapper_java", () -> new FieldMapperJava(this));
+    }
+
+    public FieldMapper getPhp() {
+        return (FieldMapper) getOrCreate("mapper_php", () -> new FieldMapperPhp(this));
     }
 
 

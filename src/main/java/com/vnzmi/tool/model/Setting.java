@@ -12,6 +12,8 @@ public class Setting {
     private String template = "";
     private String project = "";
 
+    private boolean acti;
+
     public ArrayList<Profile> getProfiles() {
         return profiles;
     }
@@ -60,5 +62,4 @@ public class Setting {
     {
         return toJson();
     }
-
 }

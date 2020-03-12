@@ -6,7 +6,7 @@ import com.vnzmi.tool.model.FieldInfo;
 import java.util.HashMap;
 import java.util.Iterator;
 
-public class TitleResolver {
+public class ExtraResolver {
     public final static HashMap<String,String[]> guessTitles = new HashMap<String,String[]>(){{
         put("ID",new String[] {"id"});
         put("电子邮件",new String[] {"email","email_address","mail"});
@@ -45,7 +45,7 @@ public class TitleResolver {
      * 获取可能的栏位名称
      * @return
      */
-    public static String getGuessedTitle(FieldInfo info)
+    public static String guessTitle(FieldInfo info)
     {
         String title = null;
         String name = info.getName();
@@ -59,10 +59,27 @@ public class TitleResolver {
             }
         }
 
-        if(title == null && info.getComment() != "" && info.getComment().length() < 6) {
-            return info.getComment();
+        if(title == null)
+        {
+            if(info.getComment() != null && !info.getComment().equals("") &&  info.getComment().length() < 6)
+            {
+                return info.getComment();
+            }else{
+                return name;
+            }
         }else{
-            return info.getName();
+            return title;
         }
+    }
+
+
+    public static boolean guessIsCreated(FieldInfo info)
+    {
+        return false;
+    }
+
+    public static boolean guessIsUpdated(FieldInfo info)
+    {
+        return false;
     }
 }

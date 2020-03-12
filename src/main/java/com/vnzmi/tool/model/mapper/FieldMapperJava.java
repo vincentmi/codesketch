@@ -1,7 +1,10 @@
 package com.vnzmi.tool.model.mapper;
 
+import com.sun.tools.javac.util.ArrayUtils;
 import com.vnzmi.tool.ArrayUtil;
 import com.vnzmi.tool.model.FieldInfo;
+
+import java.util.ArrayList;
 
 public class FieldMapperJava implements FieldMapper{
 
@@ -66,5 +69,30 @@ public class FieldMapperJava implements FieldMapper{
         }else{
             return "get"+info.getNameCamelUpper();
         }
+    }
+
+    public String getSetter()
+    {
+        return "set"+info.getNameCamelUpper();
+    }
+
+    public String[] getValidators()
+    {
+        ArrayList<String> validators = new ArrayList<>();
+        FieldMapper defaultMapper = info.getMapper();
+        if(info.isRequired())
+        {
+            validators.add("@NotNull");
+            if(ArrayUtil.inArray(defaultMapper.getType(),new String[]{FieldMapper.TYPE_TEXT ,FieldMapper.TYPE_STRING }))
+            {
+                validators.add("@NotBlank");
+            }
+
+            if(defaultMapper.getType().equals(FieldMapper.TYPE_STRING))
+            {
+                validators.add("@LENGTH(1,"+info.getMax()+")");
+            }
+        }
+        return validators.toArray(new String[validators.size()]);
     }
 }

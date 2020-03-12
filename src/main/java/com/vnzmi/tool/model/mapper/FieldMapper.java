@@ -16,4 +16,6 @@ public interface FieldMapper {
 
     String getType();
     String getGetter();
+    String getSetter();
+    String[] getValidators();
 }
