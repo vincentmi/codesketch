@@ -41,5 +41,16 @@ Vincent Mi (miwenshu@gmail.com)
 | ```${key}```  | String | PRI | 键定义 |
 | ```${extra}```  | String | AUTO_INCREMENT  | 额外信息|
 | ```${comment}```  | String | 用户名称  | 注释|
+| ```${mapper}```  | FieldMapper |   | 默认字段映射|
+| ```${java}```  | FieldMapper |   | Java字段映射|
+| ```${php}```  | FieldMapper |   | PHP字段映射|
 
+###  FieldMapper
+
+| 变量 | 类型 | 示例 | 说明 |
+|---| --- | ---- |---|
+| ```${type}```  |String | int | 变量类型 |
+| ```${getter}```  |String | getId | Getter名称 |
+| ```${setter}```  |String | setId | Setter名称 |
+| ```${validators}```  |String[] | {"@NotNULL" ,"@Email"} | 验证器 |
 

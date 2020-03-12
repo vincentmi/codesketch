@@ -83,7 +83,7 @@ public class Loader {
             File f = new File(filepath);
             ObjectMapper mapper = new ObjectMapper();
             loadedSetting = (Setting) mapper.readValue(f, Setting.class);
-            CodeSketch.info("loaded setting " + this.setting);
+            CodeSketch.info("loaded setting " );//+ this.setting);
             setting = loadedSetting;
         } catch (IOException e) {
             e.printStackTrace();

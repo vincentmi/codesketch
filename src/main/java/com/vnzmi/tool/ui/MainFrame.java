@@ -1,9 +1,11 @@
 package com.vnzmi.tool.ui;
 
 
+import com.apple.eawt.Application;
 import com.vnzmi.tool.CodeSketch;
 import com.vnzmi.tool.Loader;
 import com.vnzmi.tool.model.*;
+import sun.plugin2.util.SystemUtil;
 
 
 import javax.swing.*;
@@ -45,20 +47,21 @@ public class MainFrame extends JFrame {
         setResizable(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setDefaultLookAndFeelDecorated(true);
+        System.out.println(System.getProperty("os.name"));
 
         ImageIcon icon = new ImageIcon(Loader.getResource("codesketch.png"));
 
         setIconImage(icon.getImage());
 
-        /*System.out.println(SystemUtil.getOSType());
+        //System.out.println(SystemUtil.getOSType());
 
-        if (SystemUtil.getOSType() == SystemUtil.MACOSX) {
+        if (System.getProperty("os.name").indexOf("Mac OS") != -1) {
             Application application = Application.getApplication();
             application.setDockIconImage(icon.getImage());
             application.setAboutHandler(e -> {
                 showAboutFrame();
             });
-        }*/
+        }
 
         setSize(CodeSketch.getFrameSize());
         setMinimumSize(new Dimension(400, 300));
