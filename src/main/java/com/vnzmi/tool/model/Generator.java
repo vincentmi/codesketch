@@ -4,10 +4,7 @@ import com.vnzmi.tool.CodeSketch;
 import com.vnzmi.tool.Loader;
 import com.vnzmi.tool.StringUtil;
 import freemarker.cache.StringTemplateLoader;
-import freemarker.template.Configuration;
-import freemarker.template.Template;
-import freemarker.template.TemplateException;
-import freemarker.template.TemplateExceptionHandler;
+import freemarker.template.*;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.File;
@@ -55,7 +52,10 @@ public class Generator {
         //模板数据
         baseData = new HashMap<String, Object>();
         Setting setting = Loader.getInstance().getSetting();
-        Map<String, String> values = Loader.getInstance().getTemplateValues().getOrDefault(templateInfo.getName(), new HashMap<String, String>());
+        Map<String, String> values = Loader.getInstance()
+                .getTemplateValues()
+                .getOrDefault(templateInfo.getName(), new HashMap<String, String>()
+                );
         baseData.put("projectPath", StringUtil.rtrim(setting.getProject().trim(), "/\\"));
         baseData.putAll(values);
     }

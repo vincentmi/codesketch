@@ -1,5 +1,6 @@
 package com.vnzmi.tool.model;
 
+import com.vnzmi.tool.ArrayUtil;
 import com.vnzmi.tool.CodeSketch;
 
 import java.sql.*;
@@ -119,7 +120,32 @@ public class ProfileConnection {
             }
             FieldInfo fieldInfo = new FieldInfo();
             fieldInfo.setName(rs.getString("COLUMN_NAME"));
-
+            fieldInfo.setDataType(rs.getString("DATA_TYPE"));
+            fieldInfo.setDataTypeStr(rs.getString("COLUMN_TYPE"));
+            fieldInfo.setComment(rs.getString("COLUMN_COMMENT"));
+            fieldInfo.setNullable(rs.getString("IS_NULLABLE").equals("YES"));
+            fieldInfo.setDefaultValue(rs.getString("COLUMN_DEFAULT"));
+            fieldInfo.setExtra(rs.getString("EXTRA"));
+            fieldInfo.setKey(rs.getString("COLUMN_KEY"));
+            if(ArrayUtil.inArray(
+                    fieldInfo.getDataType(),
+                    new String[]{
+                            "tinytext", "text", "mediumtext", "longtext",
+                            "tinyblob", "blob", "mediumblob", "longblob",
+                            "char","varchar"
+                    }))
+            {
+                fieldInfo.setMax(rs.getLong("CHARACTER_MAXIMUM_LENGTH"));
+            }else if(ArrayUtil.inArray(
+                    fieldInfo.getDataType(),
+                    new String[]{
+                            "tinyint", "mediumint", "smallint", "int", "bigint",
+                            "decimal", "real", "double", "float",
+                    }))
+            {
+                fieldInfo.setNumericPrecision(rs.getInt("NUMERIC_PRECISION"));
+                fieldInfo.setNumericScale(rs.getInt("NUMERIC_SCALE"));
+            }
             tableInfo.getFields().add(fieldInfo);
 
         }

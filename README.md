@@ -22,7 +22,7 @@ Vincent Mi (miwenshu@gmail.com)
 | ```${modelCamel}```  |String | userInfo|表名驼峰 |
 | ```${model}```  |String | UserInfo|表名模型名称 |
 | ```${modelLine}```  |String | user_info|表名下划线间隔 |
-| ```${FieldInfo}```  | ArrayList<FieldInfo> | FieldInfo{}|栏位信息 |
+| ```${fields}```  | ArrayList<FieldInfo> | FieldInfo{}|栏位信息 |
 | ```${schema}```  | string | my_db|数据库名称 |
 
 #### FieldInfo

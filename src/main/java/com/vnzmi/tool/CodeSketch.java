@@ -15,7 +15,6 @@ public class CodeSketch {
     public static void main(String[] args){
         info("Application starting");
         mainFrame = new MainFrame();
-
     }
 
     public static MainFrame getMainFrame()

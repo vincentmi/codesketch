@@ -1,15 +1,21 @@
 package com.vnzmi.tool.model;
 
 import com.vnzmi.tool.StringUtil;
+import com.vnzmi.tool.model.mapper.FieldMapper;
+import com.vnzmi.tool.model.mapper.FieldMapperCommon;
+import com.vnzmi.tool.model.mapper.FieldMapperJava;
+import com.vnzmi.tool.model.mapper.TitleResolver;
+
+import java.util.HashMap;
+
 
 public class FieldInfo {
-
-
     private String name;
     private String defaultValue;
     private boolean nullable;
     private String dataType;
-    private int maxLength = -1;
+    private long max = -1;
+    private long min = -1;
     private int numericPrecision = -1;
     private int numericScale = -1;
     private String dataTypeStr;
@@ -17,7 +23,13 @@ public class FieldInfo {
     private String extra = "";
     private String comment = "";
 
-    private FieldMapper mapper ;
+    private HashMap<String,FieldMapper> mappers = new  HashMap<String,FieldMapper>();
+
+
+    public FieldInfo()
+    {
+
+    }
 
     public String getName() {
         return name;
@@ -51,12 +63,18 @@ public class FieldInfo {
         this.dataType = dataType;
     }
 
-    public int getMaxLength() {
-        return maxLength;
+    public long getMax() {
+        return max;
+    }
+    public long getMin() {
+        return min;
     }
 
-    public void setMaxLength(int maxLength) {
-        this.maxLength = maxLength;
+    public void setMax(long max) {
+        this.max = max;
+    }
+    public void setMin(long min) {
+        this.min = min;
     }
 
     public int getNumericPrecision() {
@@ -110,46 +128,50 @@ public class FieldInfo {
     public String getNameCamel() {
         return StringUtil.toCamel(getName());
     }
+    public String getNameCamelUpper() {
+        return StringUtil.toCamelUpper(getName());
+    }
 
     /**
      * 是否自增
+     *
      * @return
      */
-    public boolean isAutoIncrement()
-    {
+    public boolean isAutoIncrement() {
         return getExtra().indexOf("auto_increment") != -1;
     }
-
-    public String getMappedType()
-    {
-        return getMapper().getMappedType();
-    }
-
     /**
      * 是否必填
+     *
      * @return
      */
-    public boolean isRequired()
-    {
+    public boolean isRequired() {
         return !isNullable();
     }
 
-    public String getGuessedTitle()
-    {
-        return getMapper().getGuessedTitle();
+    public String getGuessedTitle() {
+        return TitleResolver.getGuessedTitle(this);
     }
 
     /**
      * 获取数据类型映射
+     *
      * @return
      */
-    public FieldMapper getMapper()
-    {
-        if(mapper == null)
-        {
-            mapper = new FieldMapper(this);
+    public FieldMapper getMapper() {
+        if (!mappers.containsKey("normal")) {
+           FieldMapper  mapper = new FieldMapperCommon(this);
+           mappers.put("normal",mapper);
         }
-        return mapper;
+        return mappers.get("normal");
+    }
+
+    public FieldMapper getJavaMapper() {
+        if (!mappers.containsKey("java")) {
+            FieldMapper  mapper = new FieldMapperJava(this);
+            mappers.put("java",mapper);
+        }
+        return mappers.get("java");
     }
 
 
