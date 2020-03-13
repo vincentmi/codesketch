@@ -127,6 +127,7 @@ public class Generator {
         tData.put("modelCamel", StringUtil.toCamel(tableInfo.getName()));
         tData.put("model", StringUtil.toCamelUpper(tableInfo.getName()));
         tData.put("modelLine", StringUtil.toLine((String) tData.get("modelCamel")));
+        tData.put("modelMidLine", StringUtil.toLine((String) tData.get("modelCamel"),'-'));
         tData.put("fields", tableInfo.getFields());
         tData.put("schema", tableInfo.getSchema());
 

@@ -132,6 +132,12 @@ public class FieldInfo {
     public String getNameCamelUpper() {
         return StringUtil.toCamelUpper(getName());
     }
+    public String getNameLine() {
+        return StringUtil.toLine(getName());
+    }
+    public String getNameMidLine() {
+        return StringUtil.toLine(getNameCamel(),'-');
+    }
 
     public boolean isPrimaryKey(){
         return (boolean) getOrCreate("is_primary_key" , () ->  getKey().indexOf("PRI") != -1 );

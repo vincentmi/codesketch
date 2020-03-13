@@ -15,7 +15,7 @@ import java.util.Collection;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("${TAG_DOLLAR}{application.url.prefix.v1}/${tableLowcase}")
+@RequestMapping("${TAG_DOLLAR}{application.url.prefix.v1}/${modelMidLine}")
 public class ${model}Endpoint {
 
     @Autowired

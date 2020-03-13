@@ -34,6 +34,7 @@ Vincent Mi (miwenshu@gmail.com)
 | ```${modelCamel}```  |String | userInfo|表名驼峰 |
 | ```${model}```  |String | UserInfo|表名模型名称 |
 | ```${modelLine}```  |String | user_info|表名下划线间隔 |
+| ```${modelMidLine}```  |String | user-info|表名中划线间隔 |
 | ```${fields}```  | ArrayList\<FieldInfo> | FieldInfo{}|栏位信息 |
 | ```${schema}```  | string | my_db|数据库名称 |
 
@@ -53,6 +54,8 @@ Vincent Mi (miwenshu@gmail.com)
 |---| --- | ---- |---|
 | ```${name}```  |String | id | 栏位名称 |
 | ```${nameCamel}```  |String | id | 栏位名称驼峰 |
+| ```${nameLine}```  |String | id | 栏位名下划线 |
+| ```${nameMidLine}```  |String | id | 栏位中划线 |
 | ```${defaultValue}```  |String | 1 | 默认值 |
 | ```${nullable}```  |boolean | false | 是否为空 |
 | ```${dataType}```  |String | int | 数据类型 |
