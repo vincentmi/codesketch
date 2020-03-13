@@ -5,6 +5,8 @@ Vincent Mi (miwenshu@gmail.com)
 
 用于根据数据库设计生成骨架代码.
 
+![preview](preview.png)
+
 ## 使用
 
 将模板文件拷贝到 ```~/.codesketch/templates```下.
