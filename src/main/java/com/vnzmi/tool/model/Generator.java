@@ -118,6 +118,8 @@ public class Generator {
 
         tData.put("TAG_LEFT", "<");
         tData.put("TAG_RIGHT", ">");
+        tData.put("TAG_DOLLAR", "$");
+        tData.put("TAG_WELL", "#");
         tData.put("TIME" , new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S z").format(new Date()));
         tData.put("table", tableInfo.getName());
         tData.put("tableInfo" , tableInfo);
