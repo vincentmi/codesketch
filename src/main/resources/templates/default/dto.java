@@ -31,7 +31,7 @@ public class ${model}Dto {
     }
 
     <#list fields as field>
-    public  ${field.java.getter}() {
+    public ${field.java.type} ${field.java.getter}() {
         return ${field.nameCamel};
     }
     </#list>

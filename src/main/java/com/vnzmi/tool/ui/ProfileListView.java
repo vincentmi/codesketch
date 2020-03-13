@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 public class ProfileListView {
     private JPanel pLeft;
+    private JPanel pLeftSelector;
     private JPanel pCenter;
     private JPanel pBottom;
     private JDialog dialog;
@@ -38,7 +39,45 @@ public class ProfileListView {
         dialog.setResizable(false);
         CodeSketch.center(dialog);
 
-        pLeft = new JPanel(new GridLayout(1, 1));
+        JPanel btnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 1, 1));
+        JButton btnRemove = new JButton("-");
+        JButton btnAdd = new JButton("+");
+
+        btnAdd.addActionListener(e -> {
+            Setting setting = Loader.getInstance().getSetting();
+            Profile p = new Profile();
+            String profileName = "profile-" + Double.toHexString(Math.random());
+            p.setName(profileName);
+            p.setHost("127.0.0.1");
+            p.setSchema("test");
+            p.setUser("root");
+            p.setPassword("root");
+            p.setEncoding("UTF-8");
+            p.setDriver("MySQL");
+            p.setPort(3306);
+
+            setting.appendProfile(p);
+
+            refreshProfileSelector(profileName);
+            CodeSketch.getMainFrame().reloadProfileSelection();
+        });
+
+        btnRemove.addActionListener(e->{
+                String selectedValue = profileSelector.getSelectedValue();
+                int selectedIndex = profileSelector.getSelectedIndex();
+                Loader.getInstance().getSetting().getProfiles().remove(selectedIndex);
+                refreshProfileSelector(selectedValue);
+                CodeSketch.getMainFrame().reloadProfileSelection();
+        });
+
+        btnPanel.add(btnAdd);
+        btnPanel.add(btnRemove);
+
+        pLeft = new JPanel(new BorderLayout());
+        pLeftSelector = new JPanel(new GridLayout(1, 1));
+        pLeft.add(btnPanel, BorderLayout.SOUTH);
+        pLeft.add(pLeftSelector, BorderLayout.CENTER);
+
         pCenter = new JPanel(new BorderLayout());
         pBottom = new JPanel(new GridLayout(1, 2));
         dialog.getContentPane().add(pLeft, BorderLayout.WEST);
@@ -49,7 +88,10 @@ public class ProfileListView {
         //pCenter.add(new JLabel("Please select a profile"), BorderLayout.CENTER);
 
         refreshButtonPanel();
+    }
 
+    public void show()
+    {
         dialog.setVisible(true);
     }
 
@@ -109,15 +151,7 @@ public class ProfileListView {
         btnSave.addActionListener(e -> {
             String name = nameField.getText();
             ArrayList<Profile> profiles = Loader.getInstance().getSetting().getProfiles();
-            Profile p  = null;
-            for(int i = 0,max=profiles.size();i<max;i++)
-            {
-                p = profiles.get(i);
-                if(p.getName().equals(name))
-                {
-                    break;
-                }
-            }
+            Profile p = profiles.get(profileSelector.getSelectedIndex());
             p.setName(name);
             p.setDriver(driverField.getText());
             p.setHost(hostField.getText());
@@ -128,8 +162,8 @@ public class ProfileListView {
             p.setPassword(passwordField.getText());
             Loader.getInstance().saveSetting();
             Loader.getInstance().loadSetting();
-            CodeSketch.getMainFrame().reloadProfileSelection();
             refreshProfileSelector(name);
+            CodeSketch.getMainFrame().reloadProfileSelection();
         });
 
         btnCancel.addActionListener(e -> {
@@ -140,20 +174,16 @@ public class ProfileListView {
         pBottom.add(btnCancel);
     }
 
-    private void selectProfile(String name)
-    {
+    private void selectProfile(String name) {
         ArrayList<Profile> profiles = Loader.getInstance().getSetting().getProfiles();
         int selectedIndex = 0;
-        for(int i = 0;i<profiles.size();i++)
-        {
-           if(profiles.get(i).getName().equals(name))
-           {
-               selectedIndex = i ;
-               break;
-           }
+        for (int i = 0; i < profiles.size(); i++) {
+            if (profiles.get(i).getName().equals(name)) {
+                selectedIndex = i;
+                break;
+            }
         }
         profileSelector.setSelectedIndex(selectedIndex);
-
     }
 
     public void refreshProfileSelector(String selected) {
@@ -178,9 +208,9 @@ public class ProfileListView {
 
         selectProfile(selected);
 
-        pLeft.removeAll();
-        pLeft.add(new JScrollPane(profileSelector));
-        pLeft.validate();
-        pLeft.repaint();
+        pLeftSelector.removeAll();
+        pLeftSelector.add(new JScrollPane(profileSelector));
+        pLeftSelector.validate();
+        pLeftSelector.repaint();
     }
 }

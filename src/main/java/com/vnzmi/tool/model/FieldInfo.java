@@ -133,13 +133,17 @@ public class FieldInfo {
         return StringUtil.toCamelUpper(getName());
     }
 
+    public boolean isPrimaryKey(){
+        return (boolean) getOrCreate("is_primary_key" , () ->  getKey().indexOf("PRI") != -1 );
+    }
+
     /**
      * 是否自增
      *
      * @return
      */
     public boolean isAutoIncrement() {
-        return getExtra().indexOf("auto_increment") != -1;
+        return (boolean) getOrCreate("is_auto_increment" , () ->  getExtra().indexOf("auto_increment") != -1 );
     }
 
     /**
@@ -156,11 +160,15 @@ public class FieldInfo {
     }
 
     public boolean isCreated() {
-        return (boolean) getOrCreate("guess_title", () -> ExtraResolver.guessIsCreated(this));
+        return (boolean) getOrCreate("guess_created", () -> ExtraResolver.guessIsCreated(this));
     }
 
     public boolean isUpdated() {
-        return (boolean) getOrCreate("guess_title", () -> ExtraResolver.guessIsUpdated(this));
+        return (boolean) getOrCreate("guess_updated", () -> ExtraResolver.guessIsUpdated(this));
+    }
+
+    public boolean isDeleted() {
+        return (boolean) getOrCreate("guess_deleted", () -> ExtraResolver.guessIsDeleted(this));
     }
 
     private Object getOrCreate(String key, Closures closures) {

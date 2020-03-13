@@ -24,17 +24,17 @@
 		{
 			"file" : "service.java",
 			"name" : "${model}Service.java",
-			"saveTo" : "${basePackageDir}/dto"
+			"saveTo" : "${basePackageDir}/service"
 		},
 		{
 			"file" : "entity.java",
 			"name" : "${model}.java",
-			"saveTo" : "${basePackageDir}/dto"
+			"saveTo" : "${basePackageDir}/repository/entity"
 		},
 		{
 			"file" : "repository.java",
 			"name" : "${model}Repository.java",
-			"saveTo" : "${basePackageDir}/dto"
+			"saveTo" : "${basePackageDir}/repository"
 		}
 	]
 

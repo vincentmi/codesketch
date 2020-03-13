@@ -5,7 +5,6 @@ import com.apple.eawt.Application;
 import com.vnzmi.tool.CodeSketch;
 import com.vnzmi.tool.Loader;
 import com.vnzmi.tool.model.*;
-import sun.plugin2.util.SystemUtil;
 
 
 import javax.swing.*;
@@ -47,8 +46,6 @@ public class MainFrame extends JFrame {
         setResizable(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setDefaultLookAndFeelDecorated(true);
-        System.out.println(System.getProperty("os.name"));
-
         ImageIcon icon = new ImageIcon(Loader.getResource("codesketch.png"));
 
         setIconImage(icon.getImage());
@@ -143,8 +140,9 @@ public class MainFrame extends JFrame {
         JMenu menuFile = new JMenu("Setting");
         //menuFile.add(new JMenuItem("Preferences"));
         JMenuItem menuDatabaseProfile = new JMenuItem("Database Profile");
+        final ProfileListView view = new ProfileListView(main);
         menuDatabaseProfile.addActionListener(e -> {
-            new ProfileListView(main);
+           view.show();
         });
         menuFile.add(menuDatabaseProfile);
 
@@ -307,8 +305,8 @@ public class MainFrame extends JFrame {
         });
         rightPanel.add(openSetting);
 
-        final JButton reloadProfileButton = new JButton("Reload Profile");
-        reloadProfileButton.addActionListener(e -> reloadProfileSelection());
+        final JButton reloadProfileButton = new JButton("Save Setting");
+        reloadProfileButton.addActionListener(e -> saveSetting());
 
         rightPanel.add(reloadProfileButton);
 
@@ -339,6 +337,12 @@ public class MainFrame extends JFrame {
         return toolbar;
     }
 
+    public void saveSetting()
+    {
+        Loader.getInstance().saveSetting();
+        Loader.getInstance().saveTemplateValues();
+    }
+
     public void reloadProfileSelection() {
         Setting setting = Loader.getInstance().getSetting();
         ArrayList<Profile> profiles = setting.getProfiles();
@@ -359,7 +363,7 @@ public class MainFrame extends JFrame {
 
     synchronized public void reloadSchemaSelection() {
         comboboxSchema.removeAllItems();
-        Profile profile = Loader.getInstance().loadSetting().getSetting().getProfiles().get(comboboxProfile.getSelectedIndex());
+        Profile profile = Loader.getInstance().getSetting().getProfiles().get(comboboxProfile.getSelectedIndex());
         if (profile == null) {
             showMessage("profile not selected");
         } else {
@@ -380,7 +384,7 @@ public class MainFrame extends JFrame {
             } catch (SQLException e) {
                 e.printStackTrace();
                 CodeSketch.error(e.getMessage());
-                showMessage(e.getMessage());
+                //showMessage(e.getMessage());
             }
         }
     }
@@ -389,7 +393,6 @@ public class MainFrame extends JFrame {
         JPanel toolbar = new JPanel();
         //tablePanel.setBackground(Color.white);
         //toolbar.setPreferredSize(new Dimension(CodeSketch.getMainFrame().getWidth() - 10,30));
-
         toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT));
         JCheckBox chkAllTable = new JCheckBox("All tables");
         chkAllTable.addItemListener(e -> {

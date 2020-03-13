@@ -7,12 +7,11 @@ import java.util.ArrayList;
 
 
 public class Setting {
-    private ArrayList<Profile> profiles;
+    private ArrayList<Profile> profiles = new ArrayList<>();
     private String profile = "";
     private String template = "";
     private String project = "";
 
-    private boolean acti;
 
     public ArrayList<Profile> getProfiles() {
         return profiles;
@@ -28,6 +27,10 @@ public class Setting {
 
     public void setProfile(String profile) {
         this.profile = profile;
+    }
+
+    public void appendProfile(Profile profile) {
+        profiles.add(profile);
     }
 
     public String getProject() {
@@ -46,8 +49,7 @@ public class Setting {
         this.template = template;
     }
 
-    public String toJson()
-    {
+    public String toJson() {
         ObjectMapper mapper = new ObjectMapper();
         String text = "{}";
         try {
@@ -58,8 +60,7 @@ public class Setting {
         return text;
     }
 
-    public String toString()
-    {
+    public String toString() {
         return toJson();
     }
 }

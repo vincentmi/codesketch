@@ -60,7 +60,7 @@ public class TableInfo {
             for(int i = 0,max = fields.size();i<max;i++)
             {
                 FieldInfo f = fields.get(i);
-                if(f.getKey().indexOf("PRI")!=-1)
+                if( f.isPrimaryKey())
                 {
                     pk.add(f);
                 }

@@ -74,10 +74,10 @@ public class Generator {
             return sw.toString();
         } catch (IOException e) {
             e.printStackTrace();
-            CodeSketch.getMainFrame().showMessage(e.getMessage());
+            //CodeSketch.getMainFrame().showMessage(e.getMessage());
         } catch (TemplateException e) {
             e.printStackTrace();
-            CodeSketch.getMainFrame().showMessage(e.getMessage());
+            //CodeSketch.getMainFrame().showMessage(e.getMessage());
         }
         return "";
 

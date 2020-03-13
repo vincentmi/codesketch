@@ -26,7 +26,10 @@ public class GeneratorInfoPanel {
         dialog.setSize(400, 100);
         dialog.setLayout(new BorderLayout());
 
-        dialog.add(new JLabel("File generating"), BorderLayout.NORTH);
+        JLabel genLabel = new JLabel("File generating");
+        genLabel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
+
+        dialog.add(genLabel, BorderLayout.NORTH);
 
         dialog.setJMenuBar(null);
         jpb = new JProgressBar();
