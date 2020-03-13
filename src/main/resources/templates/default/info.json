@@ -35,6 +35,11 @@
 			"file" : "repository.java",
 			"name" : "${model}Repository.java",
 			"saveTo" : "${basePackageDir}/repository"
+		},
+		{
+			"file" : "endpoint.java",
+			"name" : "${model}Endpoint.java",
+			"saveTo" : "${basePackageDir}/endpoint"
 		}
 	]
 

@@ -29,7 +29,7 @@ Vincent Mi (miwenshu@gmail.com)
 | 变量 | 类型 | 示例 | 说明 |
 |---| --- | ---- |---|
 | ```${projectPath}```  |String | /User/vicnent/dev/blog| 目标项目路径 |
-| ```${table}```  |String | User_Info | 目标项目路径 |
+| ```${table}```  |String | user_info | 表名 |
 | ```${tableInfo}```  |TableInfo |{} | 表信息 |
 | ```${modelCamel}```  |String | userInfo|表名驼峰 |
 | ```${model}```  |String | UserInfo|表名模型名称 |

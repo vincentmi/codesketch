@@ -122,6 +122,7 @@ public class Generator {
         tData.put("TAG_WELL", "#");
         tData.put("TIME" , new SimpleDateFormat("yyyy-MM-dd HH:mm:ss S z").format(new Date()));
         tData.put("table", tableInfo.getName());
+        tData.put("tableLowcase", tableInfo.getName().toLowerCase());
         tData.put("tableInfo" , tableInfo);
         tData.put("modelCamel", StringUtil.toCamel(tableInfo.getName()));
         tData.put("model", StringUtil.toCamelUpper(tableInfo.getName()));
