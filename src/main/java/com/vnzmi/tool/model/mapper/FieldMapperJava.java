@@ -1,6 +1,6 @@
 package com.vnzmi.tool.model.mapper;
 
-import com.sun.tools.javac.util.ArrayUtils;
+//import com.sun.tools.javac.util.ArrayUtils;
 import com.vnzmi.tool.ArrayUtil;
 import com.vnzmi.tool.model.FieldInfo;
 

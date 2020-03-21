@@ -30,6 +30,8 @@ public class MainFrame extends JFrame {
     private JTextArea console = null;
     private JComboBox comboboxTemp;
 
+    public ImageIcon icon;
+
     private HashMap<String, TableInfo> tablesInfos;
 
     private ArrayList<TablePanel> _tablePanels;
@@ -46,7 +48,8 @@ public class MainFrame extends JFrame {
         setResizable(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setDefaultLookAndFeelDecorated(true);
-        ImageIcon icon = new ImageIcon(Loader.getResource("codesketch.png"));
+
+        icon = new ImageIcon(ClassLoader.getSystemResource("codesketch.png"));
 
         setIconImage(icon.getImage());
 

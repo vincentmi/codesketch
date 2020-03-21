@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
- * 代码生成器
+ * Code generator
  */
 public class Generator {
     private Configuration cfg;
@@ -40,6 +40,7 @@ public class Generator {
             cfg.setTemplateExceptionHandler(TemplateExceptionHandler.DEBUG_HANDLER);
             cfg.setLogTemplateExceptions(false);
             cfg.setWrapUncheckedExceptions(true);
+            cfg.setWhitespaceStripping(true);
 
             cfgString.setDefaultEncoding("UTF-8");
 

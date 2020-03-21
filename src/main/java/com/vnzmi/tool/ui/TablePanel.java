@@ -51,7 +51,7 @@ public class TablePanel {
         JButton btnPreview = new JButton("Preview");
         btnPreview.addActionListener(e -> new PreviewPanel(tableInfo));
         buttonPanel.add(btnPreview);
-        buttonPanel.add(new JButton("Generate"));
+        //buttonPanel.add(new JButton("Generate"));
         tablePanel.add(buttonPanel);
         tablePanel.addMouseListener(new TablePanelMouseListener(table));
     }

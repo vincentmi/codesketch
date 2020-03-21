@@ -5,13 +5,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vnzmi.tool.model.Setting;
 import com.vnzmi.tool.model.TableInfo;
 import com.vnzmi.tool.model.TemplateInfo;
+import com.vnzmi.tool.model.mapper.FieldMapper;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.zip.ZipEntry;
 
 public class Loader {
     public static Loader instance = null;
@@ -71,8 +76,7 @@ public class Loader {
         File f = new File(filepath);
 
         try {
-            if(!f.exists())
-            {
+            if (!f.exists()) {
                 f.createNewFile();
             }
             FileOutputStream fos = new FileOutputStream(f);
@@ -84,19 +88,23 @@ public class Loader {
         }
     }
 
-    public void copySource(String src , String target) throws IOException {
+    public void copySource(String src, String target) throws IOException {
         FileChannel inputChannel = null;
         FileChannel outputChannel = null;
+        System.out.println(src);
         try {
-            inputChannel = new FileInputStream(getResource(src)).getChannel();
+            InputStream is = CodeSketch.class.getClassLoader().getResourceAsStream(src);
+            InputStreamReader isr = new InputStreamReader(is);
+
+
+            inputChannel = new FileInputStream(new File(src)).getChannel();
             outputChannel = new FileOutputStream(new File(target)).getChannel();
             outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
         } finally {
-            inputChannel.close();
-            outputChannel.close();
+            if (inputChannel != null) inputChannel.close();
+            if (outputChannel != null) outputChannel.close();
         }
     }
-
 
 
     public Loader loadSetting() {
@@ -105,9 +113,9 @@ public class Loader {
             String filepath = getSettingFilePath();
             CodeSketch.info("loading " + filepath);
             File f = new File(filepath);
-            if(!f.exists()) {
-                copySource("setting.json",getRootPath()+File.separator+"setting.json");
-                copySource("values.json",getRootPath()+File.separator+"values.json");
+            if (!f.exists()) {
+                copyFileFromJar("setting.json", getRootPath() + File.separator + "setting.json");
+                copyFileFromJar("values.json", getRootPath() + File.separator + "values.json");
             }
             ObjectMapper mapper = new ObjectMapper();
             loadedSetting = (Setting) mapper.readValue(f, Setting.class);
@@ -125,20 +133,20 @@ public class Loader {
         File templateRoot = new File(getTemplatePath());
         if (!templateRoot.isDirectory()) {
             templateRoot.mkdirs();
-            File defaultTemplate = new File(getTemplatePath()+File.separator+"default");
+            File defaultTemplate = new File(getTemplatePath() + File.separator + "default");
             defaultTemplate.mkdir();
-            File orgDefaultTemplate = new File(getResource("templates/default"));
+            copyDirectoryFromJar("templates/default", getRootPath());
+            /*File orgDefaultTemplate = new File(getResource("templates/default"));
             File[] files = orgDefaultTemplate.listFiles();
             try {
                 for (int i = 0; i < files.length; i++) {
                     copySource(
-                            "templates/default/"+ files[i].getName(),
+                            "templates/default/" + files[i].getName(),
                             defaultTemplate.getAbsolutePath() + File.separator + files[i].getName());
                 }
-            }catch (IOException e)
-            {
+            } catch (IOException e) {
                 CodeSketch.info(e.getMessage());
-            }
+            }*/
         }
 
         String[] templates = templateRoot.list((dir, name) -> dir.isDirectory());
@@ -213,9 +221,90 @@ public class Loader {
         }
     }
 
+
+    public static void copyDirectoryFromJar(String src , String desc)
+    {
+        if (CodeSketch.inJar == false) {
+            File orgDefaultTemplate = new File(src);
+
+            File[] files = orgDefaultTemplate.listFiles();
+            for (int i = 0; i < files.length; i++) {
+                copyFileFromJar(
+                        src + files[i].getName(),
+                        desc + File.separator + files[i].getName());
+            }
+        }else {
+            try {
+                JarFile jarFile = new JarFile(CodeSketch.jarFile);
+                Enumeration<JarEntry> files = jarFile.entries();
+                while(files.hasMoreElements())
+                {
+                    JarEntry item = files.nextElement();
+                    String name = item.getName();
+                    if(name.startsWith(src))
+                    {
+                        System.out.println("COPY:" + name +   "->" + desc +File.separator+name);
+                        copyFileFromJar(name , desc+File.separator+name);
+                    }
+
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public static void copyFileFromJar(String src, String dest) {
+        if (CodeSketch.inJar == false) {
+            ClassLoader classLoader = CodeSketch.class.getClassLoader();
+            URL resource = classLoader.getResource(src);
+            File srcFile = new File(resource.getPath());
+            FileChannel inputChannel = null;
+            FileChannel outputChannel = null;
+
+            try {
+                InputStream is = CodeSketch.class.getClassLoader().getResourceAsStream(src);
+                InputStreamReader isr = new InputStreamReader(is);
+                inputChannel = new FileInputStream(srcFile).getChannel();
+                outputChannel = new FileOutputStream(new File(dest)).getChannel();
+                outputChannel.transferFrom(inputChannel, 0, inputChannel.size());
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    if (outputChannel != null) outputChannel.close();
+                    if (inputChannel != null) inputChannel.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+    }else{
+        try {
+            JarFile jarFile = new JarFile(CodeSketch.jarFile);
+            ZipEntry settingJson = jarFile.getEntry(src);
+            byte[] buffer = new byte[(int) settingJson.getSize()];
+            InputStream is = jarFile.getInputStream(settingJson);
+            is.read(buffer);
+            is.close();
+            FileOutputStream destFile = new FileOutputStream(new File(dest));
+            destFile.write(buffer);
+            destFile.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+
     public static String getResource(String file) {
-        ClassLoader classLoader = CodeSketch.class.getClassLoader();
-        URL resource = classLoader.getResource(file);
-        return resource.getPath();
+        if (CodeSketch.inJar == false) {
+            ClassLoader classLoader = CodeSketch.class.getClassLoader();
+            URL resource = classLoader.getResource(file);
+            InputStream is = classLoader.getResourceAsStream(file);
+            return resource.getFile();
+        } else {
+            return "";
+        }
     }
 }

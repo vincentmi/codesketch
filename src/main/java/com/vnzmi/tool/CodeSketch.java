@@ -6,14 +6,32 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
+import java.net.URL;
 
 
 public class CodeSketch {
     private static Logger logger = null;
     private static MainFrame mainFrame = null;
+    public static boolean inJar = false;
+    public static String jarFile = "";
 
     public static void main(String[] args){
         info("Application starting");
+
+        URL resource = CodeSketch.class.getClassLoader().getResource("setting.json");
+        String path = resource.getPath();
+
+        int pos = path.indexOf('!');
+
+        if(pos != -1)
+        {
+            inJar = true;
+            jarFile = path.substring(5,pos);
+            System.out.println(jarFile);
+        }else{
+            inJar = false;
+        }
+
         mainFrame = new MainFrame();
     }
 

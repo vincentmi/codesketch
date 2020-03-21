@@ -17,7 +17,7 @@ public class AboutUs {
     public void  init()
     {
         JPanel topPanel = new JPanel();
-        ImageIcon logo = new ImageIcon(Loader.getResource("codesketch.png"));
+        ImageIcon logo = CodeSketch.getMainFrame().icon;
         logo.setImage(logo.getImage().getScaledInstance(80,80,Image.SCALE_SMOOTH));
 
         JLabel logoLabel = new JLabel(logo);

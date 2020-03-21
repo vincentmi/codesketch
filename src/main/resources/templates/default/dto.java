@@ -3,6 +3,8 @@ package ${basePackage};
 import ${basePackage}.repository.entity.${model};
 import javax.validation.constraints.*;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.google.common.base.MoreObjects;
 
 /*
@@ -18,6 +20,9 @@ public class ${model}Dto {
     <#list field.java.validators as validator>
     ${validator}
     </#list>
+    <#if field.created#>
+    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    <#/if>
     private ${field.java.type} ${field.nameCamel};
     </#list>
     
