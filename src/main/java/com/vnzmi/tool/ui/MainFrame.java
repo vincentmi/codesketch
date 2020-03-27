@@ -16,10 +16,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.util.*;
+import java.util.List;
 
 public class MainFrame extends JFrame {
 
@@ -494,20 +492,23 @@ public class MainFrame extends JFrame {
             JPanel panel = new JPanel();
             panel.setBackground(Color.white);
 
-            Iterator<TableInfo> it = tablesInfos.values().iterator();
-            TableInfo tableInfo;
+            Set<String> keys = tablesInfos.keySet();
+            List<String> keysList =  new ArrayList<>();
+            keysList.addAll(tablesInfos.keySet());
+
+            Collections.sort(keysList);
+
+            TableInfo tableInfo = null;
             SpringLayout panelLayout = new SpringLayout();
             panel.setLayout(panelLayout);
             SpringLayout.Constraints constraints;
-
-            int i = 0;
-            while (it.hasNext()) {
-                tableInfo = it.next();
+            int i=0;
+            for(int j = 0,m=keysList.size();j<m;j++){
+                tableInfo = tablesInfos.get(keysList.get(i));
                 TablePanel tp = new TablePanel(tableInfo);
                 _tablePanels.add(tp);
 
                 JPanel tpPanel = tp.getPanel();
-
 
                 panel.add(tpPanel);
                 constraints = panelLayout.getConstraints(tpPanel);

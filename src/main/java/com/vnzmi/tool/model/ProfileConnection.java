@@ -1,8 +1,12 @@
 package com.vnzmi.tool.model;
 
+import com.sun.jndi.toolkit.url.UrlUtil;
 import com.vnzmi.tool.ArrayUtil;
 import com.vnzmi.tool.CodeSketch;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,13 +38,20 @@ public class ProfileConnection {
 
     private Connection createConnection() throws SQLException
     {
-        return DriverManager.getConnection(
-                "jdbc:mysql://"
-                        +this.profile.getHost()
-                        +":"+Integer.toString(this.profile.getPort())+"/?"
-                        +"user="+this.profile.getUser()
-                        +"&password="+this.profile.getPassword()
-        );
+        String password="" ;
+        try {
+             password = URLEncoder.encode(this.profile.getPassword(), "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        String dsn = "jdbc:mysql://"
+                +this.profile.getHost()
+                +":"+Integer.toString(this.profile.getPort())+"/?"
+                +"user="+this.profile.getUser()
+                +"&password="+password;
+        CodeSketch.info(dsn);
+        return DriverManager.getConnection(dsn);
     }
 
     public Connection getConnection() throws SQLException
