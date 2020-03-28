@@ -52,7 +52,7 @@ public class FieldMapperPhp implements FieldMapper{
             dataType = "String";
         }
 
-        if (orgDataType.equals("tinyint") && info.getNumericPrecision() == 1) {
+        if (orgDataType.equals("tinyint") && info.getDataTypeStr().equals("tinyint(1)")) {
             dataType = "boolean";
         }
         return dataType;

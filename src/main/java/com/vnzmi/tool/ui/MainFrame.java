@@ -521,10 +521,17 @@ public class MainFrame extends JFrame {
             panel.setVisible(true);
             panel.setAutoscrolls(false);
 
+            int scrollUnit = Math.round(i/20);
+
+            scrollUnit = scrollUnit > 1 ? scrollUnit : 1;
+
+            tableList.getVerticalScrollBar().setUnitIncrement(scrollUnit);
+
             JViewport jw = new JViewport();
             jw.add(panel);
             jw.validate();
             jw.repaint();
+
 
             tableList.setViewport(jw);
             //centerPanel.setViewport(jw);
