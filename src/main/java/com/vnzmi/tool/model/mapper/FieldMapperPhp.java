@@ -3,27 +3,19 @@ package com.vnzmi.tool.model.mapper;
 import com.vnzmi.tool.ArrayUtil;
 import com.vnzmi.tool.model.FieldInfo;
 
-public class FieldMapperPhp implements FieldMapper{
-
-    private FieldInfo info;
-
-    private String type = null ;
-    private String getter = null;
+public class FieldMapperPhp extends FieldMapperCommon{
 
     public FieldMapperPhp(FieldInfo info)
     {
-        this.info = info;
+        super(info);
     }
 
-    public  String getType() {
-        if(type == null)
-        {
-            type = doGetType();
-        }
-        return type;
+    public  String getTypeObject() {
+        return getType();
     }
 
-    private String doGetType() {
+    @Override
+    protected String doGetType() {
 
         String dataType;
         String orgDataType = info.getDataType();
@@ -57,22 +49,6 @@ public class FieldMapperPhp implements FieldMapper{
         }
         return dataType;
     }
-
-    public String getGetter()
-    {
-        if(getType().equals("boolean"))
-        {
-            return "is"+info.getNameCamelUpper();
-        }else{
-            return "get"+info.getNameCamelUpper();
-        }
-    }
-
-    public String getSetter()
-    {
-        return "set"+info.getNameCamelUpper();
-    }
-
     public String[] getValidators()
     {
 

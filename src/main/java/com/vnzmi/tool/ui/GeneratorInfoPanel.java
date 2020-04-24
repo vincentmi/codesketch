@@ -66,8 +66,8 @@ public class GeneratorInfoPanel {
         dialog.add(btnPanel, BorderLayout.SOUTH);
 
         CodeSketch.center(dialog);
-
     }
+
 
     private void generate() {
         ArrayList<TablePanel> tables = CodeSketch.getMainFrame().getTablePanels();

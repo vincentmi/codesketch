@@ -21,23 +21,19 @@ public class ${model}Endpoint {
     @Autowired
     ${model}Service ${modelCamel}Service ;
 
-    @RequestMapping(value = "",method = RequestMethod.GET)
-    public PageResponse list(Pageable pager) {
-        Page<${model}> page = ${modelCamel}Service.list(pager);
-        Collection<${model}Dto> data = page.getContent().stream().map(
-                item -> new ${model}Dto(item)
-        ).collect(Collectors.toList());
-
-        return PageResponse.pack(page ,data);
+    @GetMapping
+    public PageResponse list(Pageable pager,String keyword) {
+        Page<${model}> pageData = ${modelCamel}Service.list(pager,keyword);
+        return PageResponse.create(pageData ,e -> new ${model}Dto((${model}) e));
     }
 
-    @RequestMapping(value = "/{id}",method = RequestMethod.GET)
-    public ${model}Dto detail(@PathVariable  long  id )
+    @GetMapping("/{id}")
+    public ${model}Dto detail(@PathVariable("id")  long  id )
     {
-        return new ${model}Dto(${modelCamel}Service.getById(id));
+        return new ${model}Dto(${modelCamel}Service.getOrFail(id));
     }
 
-    @RequestMapping(value = "",method = RequestMethod.POST)
+    @PostMapping
     public ${model}Dto create(@RequestBody @Valid ${model}Dto item)
     {
         ${model} item1 = ${modelCamel}Service.create(item);
@@ -45,18 +41,17 @@ public class ${model}Endpoint {
         return new ${model}Dto(item1);
     }
 
-    @RequestMapping(value = "/{id}",method = RequestMethod.PUT)
-    public ${model}Dto update(@PathVariable  long id , @RequestBody @Valid  ${model}Dto item)
-            throws BusinessException
+    @PutMapping("/{id}")
+    public ${model}Dto update(@PathVariable("id")  long id , @RequestBody @Valid  ${model}Dto item)
     {
-        Application item1 = ${modelCamel}Service.update(id,item);
+        ${model} item1 = ${modelCamel}Service.update(id,item);
 
         return new ${model}Dto(item1);
     }
 
 
-    @RequestMapping(value = "/{id}",method = RequestMethod.DELETE)
-    public boolean delete(@PathVariable  long id )
+    @DeleteMapping("/{id}")
+    public boolean delete(@PathVariable("id")  long id )
             throws BusinessException
     {
         return ${modelCamel}Service.delete(id);

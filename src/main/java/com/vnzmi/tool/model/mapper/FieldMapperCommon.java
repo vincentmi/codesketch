@@ -4,23 +4,37 @@ import com.vnzmi.tool.ArrayUtil;
 import com.vnzmi.tool.model.FieldInfo;
 
 public class FieldMapperCommon implements FieldMapper {
-    private FieldInfo info;
-    private String type ;
+    protected FieldInfo info;
+    protected String type;
 
     public FieldMapperCommon(FieldInfo info) {
         this.info = info;
     }
 
-    public String getType()
-    {
-        if(type == null)
-        {
+
+    public String getTypeObject() {
+        return getType();
+    }
+
+    public String getType() {
+        if (type == null) {
             type = doGetType();
         }
         return type;
     }
 
-    private String doGetType() {
+
+    public String getDefaultText() {
+        return info.getDefaultValue();
+    }
+
+
+    public String getDefaultExpression() {
+        String defaultValueText = getDefaultText();
+        return defaultValueText == null ? "" : " = " + defaultValueText;
+    }
+
+    protected String doGetType() {
         String mappedType;
         String orgDataType = info.getDataType();
         if (orgDataType.equals("enum")) {
@@ -53,10 +67,15 @@ public class FieldMapperCommon implements FieldMapper {
         return mappedType;
     }
 
-    @Override
     public String getGetter() {
-        return "get"+info.getNameCamelUpper();
+        return "get" + info.getNameCamelUpper();
     }
-    public String getSetter() { return "set"+info.getNameCamelUpper(); }
-    public String[] getValidators(){return  new String[]{};}
+
+    public String getSetter() {
+        return "set" + info.getNameCamelUpper();
+    }
+
+    public String[] getValidators() {
+        return new String[]{};
+    }
 }

@@ -37,6 +37,7 @@ Vincent Mi (miwenshu@gmail.com)
 | ```${modelMidLine}```  |String | user-info|表名中划线间隔 |
 | ```${fields}```  | ArrayList\<FieldInfo> | FieldInfo{}|栏位信息 |
 | ```${schema}```  | string | my_db|数据库名称 |
+| ```${primaryKey}```  | FieldInfo{} | |主键,第一个主键 |
 
 #### TableInfo
 
@@ -85,6 +86,9 @@ Vincent Mi (miwenshu@gmail.com)
 | 变量 | 类型 | 示例 | 说明 |
 |---| --- | ---- |---|
 | ```${type}```  |String | int | 变量类型 |
+| ```${typeObject}```  |String | int | 变量包装类型 |
+| ```${defaultText}```  |String | "no name" | 默认值文本 |
+| ```${defaultExpression}```  |String | = "no name" | 赋值表达式 |
 | ```${getter}```  |String | getId | Getter名称 |
 | ```${setter}```  |String | setId | Setter名称 |
 | ```${validators}```  |String[] | {"@NotNULL" ,"@Email"} | 验证器 |

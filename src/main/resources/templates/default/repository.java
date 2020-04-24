@@ -2,7 +2,7 @@
 package ${basePackage}.repository;
 
 import ${basePackage}.repository.entity.${model};
-import io.philo.ops.util.repository.PhiloRepository;
+import com.vnzmi.commons.data.PhiloRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository

@@ -1,22 +1,33 @@
 package ${basePackage}.repository.entity;
 
-import ${basePackage}.dto.UserDto;
-import com.google.common.base.MoreObjects;
+import ${basePackage}.dto.${model}Dto;
 import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 import org.hibernate.annotations.*;
 import java.util.Date;
+import lombok.Data;
 
 @Entity
+@Data
 @Table(name = "${table}")
+<#list fields as field>
+<#if field.deleted>
+@SQLDelete(sql="UPDATE ${table} SET ${field.nameLine} = NOW() WHERE ${primaryKey.name} = ?")
+@SQLDeleteAll(sql="UPDATE ${table} SET ${field.nameLine} = NOW() WHERE ${primaryKey.name} = ?")
+@Where(clause = "(${field.nameLine} IS NULL OR ${field.nameLine} > NOW())")
+</#if>
+</#list>
 public class ${model} {
     private static long serialVersionUID = 1L;
     
     <#list fields as field>
-    <#compress><#if field.primaryKey>@Id</#if>
+    <#if field.primaryKey>@Id</#if>
     <#if field.autoIncrement>@GeneratedValue(strategy = GenerationType.IDENTITY)</#if>
     <#if field.created>@CreationTimestamp</#if>
-    <#if field.updated>@UpdateTimestamp</#if></#compress>    
-    private ${field.java.type} ${field.nameCamel};
+    <#if field.updated>@UpdateTimestamp</#if>
+    @Column(name="${field.nameLine}")    
+    private ${field.java.typeObject} ${field.nameCamel} ${field.java.defaultExpression};
     </#list>
     
 
@@ -27,23 +38,5 @@ public class ${model} {
         <#list fields as field>
         ${field.java.setter}(dtoObject.${field.java.getter}());
         </#list>
-    }
-
-    <#list fields as field>
-    public ${field.java.type} ${field.java.getter}() {
-        return ${field.nameCamel};
-    }
-    public void ${field.java.setter}(${field.java.type} value) {
-        this.${field.nameCamel} = value;
-    }
-    </#list>
-
-    public String toString()
-    {
-        return MoreObjects.toStringHelper(this)
-        <#list fields as field>
-                .add("${field.nameCamel}",${field.java.getter}())
-        </#list>
-                .toString();
     }
 }

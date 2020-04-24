@@ -326,6 +326,13 @@ public class MainFrame extends JFrame {
         });
         rightPanel.add(generateButton);
 
+        JButton generateFromJsonButton = new JButton("Generate From JSON");
+        generateFromJsonButton.addActionListener(e -> {
+            new JsonGeneratorView(this);
+
+        });
+        rightPanel.add(generateFromJsonButton);
+
         //JToolBar toolbar = new JToolBar();
         JPanel toolbar = new JPanel();
         //toolbar.setFloatable(false);

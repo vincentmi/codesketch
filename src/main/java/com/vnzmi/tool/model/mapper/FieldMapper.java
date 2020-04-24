@@ -13,8 +13,10 @@ public interface FieldMapper {
     public final static String TYPE_DATE = "date";
     public final static String TYPE_DATETIME = "datetime";
     public final static String TYPE_BOOLEAN = "boolean";
-
+    String getTypeObject();
     String getType();
+    String getDefaultText();
+    String getDefaultExpression();
     String getGetter();
     String getSetter();
     String[] getValidators();

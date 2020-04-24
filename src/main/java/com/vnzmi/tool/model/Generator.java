@@ -131,6 +131,7 @@ public class Generator {
         tData.put("modelMidLine", StringUtil.toLine((String) tData.get("modelCamel"),'-'));
         tData.put("fields", tableInfo.getFields());
         tData.put("schema", tableInfo.getSchema());
+        tData.put("primaryKey",tableInfo.getFirstPK());
 
         CodePack[] codePacks;
         if (need == null) {
