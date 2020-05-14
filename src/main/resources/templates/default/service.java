@@ -23,7 +23,7 @@ public class ${model}Service {
     public ${model} create(${model}Dto dto)
     {
         ${model} item = new ${model}(dto);
-        repository.save(item);
+        item = repository.save(item);
         return item;
     }
 

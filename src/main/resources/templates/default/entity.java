@@ -15,7 +15,7 @@ import lombok.Data;
 <#if field.deleted>
 @SQLDelete(sql="UPDATE ${table} SET ${field.nameLine} = NOW() WHERE ${primaryKey.name} = ?")
 @SQLDeleteAll(sql="UPDATE ${table} SET ${field.nameLine} = NOW() WHERE ${primaryKey.name} = ?")
-@Where(clause = "(${field.nameLine} IS NULL OR ${field.nameLine} > NOW())")
+@Where(clause = " ${field.nameLine} IS NULL ")
 </#if>
 </#list>
 public class ${model} {
