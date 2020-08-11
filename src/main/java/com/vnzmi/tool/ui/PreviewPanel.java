@@ -29,7 +29,14 @@ public class PreviewPanel {
         TemplateFile[] files = templateInfo.getFiles();
 
         Generator gen = new Generator(templateInfo);
-        CodePack[] codePacks = gen.build(tableInfo);
+        CodePack[] codePacks = null;
+        try {
+            codePacks = gen.build(tableInfo);
+        }catch (Exception e){
+            e.printStackTrace();
+            CodeSketch.fatal(e.getMessage());
+            return ;
+        }
 
         for(int i = 0;i<codePacks.length;i++)
         {

@@ -3,6 +3,7 @@ package com.vnzmi.tool.model;
 import com.vnzmi.tool.CodeSketch;
 import com.vnzmi.tool.Loader;
 import com.vnzmi.tool.StringUtil;
+import com.vnzmi.tool.exception.UnsupportedTableException;
 import freemarker.cache.StringTemplateLoader;
 import freemarker.template.*;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -108,8 +109,13 @@ public class Generator {
         return "";
     }
 
-    public CodePack[] build(TableInfo tableInfo) {
-        return build(tableInfo, null);
+    public CodePack[] build(TableInfo tableInfo) throws Exception {
+        if(tableInfo.getPrimaryKeyNum() == 0)
+        {
+            throw new UnsupportedTableException("TABLE(" + tableInfo.getName()+") have no primary key");
+        }else {
+            return build(tableInfo, null);
+        }
     }
 
     public CodePack[] build(TableInfo tableInfo, HashSet<String> need) {

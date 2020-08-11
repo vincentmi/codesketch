@@ -59,9 +59,9 @@ public class ProfileConnection {
         if(connection ==null) {
             connection = createConnection();
         }else {
-            com.mysql.jdbc.Connection c = (com.mysql.jdbc.Connection)connection;
+
             try{
-                c.ping();
+                connection.createStatement().executeQuery("SELECT 1");
             }catch (SQLException e)
             {
                 connection = createConnection();

@@ -5,6 +5,7 @@ import com.vnzmi.tool.ui.MainFrame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
 
@@ -80,6 +81,12 @@ public class CodeSketch {
             getMainFrame().appendConsole(msg);
         }
 
+    }
+
+    public static void fatal(String msg)
+    {
+        JOptionPane.showMessageDialog(getMainFrame(),msg,"错误",JOptionPane.ERROR_MESSAGE);
+        error(msg);
     }
 
     public static  void error(String msg)

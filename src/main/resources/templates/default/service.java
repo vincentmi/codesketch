@@ -72,7 +72,7 @@ public class ${model}Service {
                 String quotedKeyword = "%"+keyword+"%";
                 <#list fields as field>
                 <#if field.java.type == "String">
-                predicates.add(criteriaBuilder.like(root.get("${field.nameLine}") ,quotedKeyword));
+                predicates.add(criteriaBuilder.like(root.get("${field.nameCamel}") ,quotedKeyword));
                 </#if>
                 </#list>
                 if(predicates.size() > 0)
