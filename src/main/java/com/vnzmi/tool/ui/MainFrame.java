@@ -1,7 +1,6 @@
 package com.vnzmi.tool.ui;
 
 
-import com.apple.eawt.Application;
 import com.vnzmi.tool.CodeSketch;
 import com.vnzmi.tool.Loader;
 import com.vnzmi.tool.model.*;
@@ -47,19 +46,28 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setDefaultLookAndFeelDecorated(true);
 
+
+
         icon = new ImageIcon(ClassLoader.getSystemResource("codesketch.png"));
 
         setIconImage(icon.getImage());
-
         //System.out.println(SystemUtil.getOSType());
+        /*
+        if(CodeSketch.javaVersion > 1.9F) {
 
-        if (System.getProperty("os.name").indexOf("Mac OS") != -1) {
-            Application application = Application.getApplication();
-            application.setDockIconImage(icon.getImage());
-            application.setAboutHandler(e -> {
-                showAboutFrame();
-            });
-        }
+        }else{
+            if (System.getProperty("os.name").indexOf("Mac OS") != -1) {
+                Application application = Application.getApplication();
+                application.setDockIconImage(icon.getImage());
+                application.setAboutHandler(e -> {
+                    showAboutFrame();
+                });
+            }
+        }*/
+
+
+
+
 
         setSize(CodeSketch.getFrameSize());
         setMinimumSize(new Dimension(400, 300));

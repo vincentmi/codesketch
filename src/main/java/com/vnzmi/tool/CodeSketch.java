@@ -15,9 +15,13 @@ public class CodeSketch {
     private static MainFrame mainFrame = null;
     public static boolean inJar = false;
     public static String jarFile = "";
+    public static float javaVersion = 0;
 
     public static void main(String[] args){
         info("Application starting");
+
+        javaVersion = javaVersion(System.getProperty("java.version"));
+        info("JVM="+javaVersion);
 
         URL resource = CodeSketch.class.getClassLoader().getResource("setting.json");
         String path = resource.getPath();
@@ -48,6 +52,26 @@ public class CodeSketch {
             logger = LogManager.getLogger(LogManager.ROOT_LOGGER_NAME);
         }
         return logger;
+    }
+
+    public static float javaVersion(String version)
+    {
+        if(version == null){
+            throw new RuntimeException("No JVM");
+        }
+        version  = version.replace('_','.');
+        int dot1 = version.indexOf('.');
+
+        if(dot1 == -1){
+            return Float.parseFloat(version);
+        }else {
+            int dot2 = version.indexOf('.',dot1+1);
+            if(dot2 == -1){
+                return Float.parseFloat(version);
+            }else{
+                return Float.parseFloat(version.substring(0,dot2));
+            }
+        }
     }
 
     public static void  center(Window frame)

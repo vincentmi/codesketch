@@ -77,9 +77,11 @@ public class FieldMapperJava extends FieldMapperCommon {
             dataType = "Date";
         } else if (orgDataType.equals("datetime")) {
             dataType = "Date";
-        } else if (ArrayUtil.inArray(orgDataType, new String[]{"tinyint", "mediumint", "smallint", "int", "bigint"})) {
+        }  else if (ArrayUtil.inArray(orgDataType, new String[]{"tinyint", "mediumint", "smallint"})) {
+            dataType = "int";
+        } else if (ArrayUtil.inArray(orgDataType, new String[]{ "int", "bigint"})) {
             dataType = "long";
-        } else if (ArrayUtil.inArray(orgDataType, new String[]{"tinytext", "text", "mediumtext", "longtext"})) {
+        }  else if (ArrayUtil.inArray(orgDataType, new String[]{"tinytext", "text", "mediumtext", "longtext"})) {
             dataType = "String";
         } else if (ArrayUtil.inArray(orgDataType, new String[]{"decimal", "real", "double", "float"})) {
             dataType = "double";
