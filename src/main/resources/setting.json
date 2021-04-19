@@ -7,27 +7,27 @@
     "user" : "root",
     "password" : "root",
     "encoding" : "UTF-8",
-    "schema" : "test"
+    "schema" : "mysql"
   }, {
-    "name" : "local-vm",
+    "name" : "local-docker",
     "driver" : "mysql",
     "host" : "192.168.33.10",
     "port" : 3306,
     "user" : "root",
     "password" : "root",
     "encoding" : "UTF-8",
-    "schema" : "db2"
+    "schema" : "mysql"
   }, {
-    "name" : "mysql.dev.philo.in",
+    "name" : "local-3307",
     "driver" : "mysql",
-    "host" : "mysql.dev.philo.in",
-    "port" : 3306,
+    "host" : "127.0.0.1",
+    "port" : 3307,
     "user" : "root",
     "password" : "root",
     "encoding" : "UTF-8",
-    "schema" : "db2"
+    "schema" : "mysql"
   } ],
-  "profile" : "mysql.dev.philo.in",
+  "profile" : "local-3307",
   "template" : "",
-  "project"  : "/User/vincentmi/dev/xf/uc"
+  "project"  : "/User/vincentmi/dev/"
 }

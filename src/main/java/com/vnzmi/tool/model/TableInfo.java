@@ -9,6 +9,7 @@ public class TableInfo {
     private String catalog ;
     private String schema ;
     private String name;
+    private String comment;
     private ArrayList<FieldInfo> fields;
 
     private ArrayList<FieldInfo> pk = null;
@@ -28,6 +29,10 @@ public class TableInfo {
     public void setSchema(String schema) {
         this.schema = schema;
     }
+
+    public void setComment(String comment) {this.comment = comment;}
+
+    public String getComment(){return this.comment;}
 
     public String getName() {
         return name;

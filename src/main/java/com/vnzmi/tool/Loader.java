@@ -133,9 +133,14 @@ public class Loader {
         File templateRoot = new File(getTemplatePath());
         if (!templateRoot.isDirectory()) {
             templateRoot.mkdirs();
-            File defaultTemplate = new File(getTemplatePath() + File.separator + "default");
-            defaultTemplate.mkdir();
-            copyDirectoryFromJar("templates/default", getRootPath());
+
+            String[] defaultTemps = new String[] {"default","spring_boot_v1","spring_boot_v2"};
+            for(int i= 0 ;i< defaultTemps.length;i++)
+            {
+                File defaultTemplate = new File(getTemplatePath() + File.separator + defaultTemps[i]);
+                defaultTemplate.mkdir();
+                copyDirectoryFromJar("templates/"+defaultTemps[i], getRootPath());
+            }
             /*File orgDefaultTemplate = new File(getResource("templates/default"));
             File[] files = orgDefaultTemplate.listFiles();
             try {

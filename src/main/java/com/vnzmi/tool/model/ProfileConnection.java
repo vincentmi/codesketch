@@ -101,7 +101,39 @@ public class ProfileConnection {
         return d;
     }
 
+    public HashMap<String,TableInfo> getTableMeta() throws SQLException {
+        Statement query = getConnection().createStatement();
+        String sql = "SELECT * " +
+                "FROM  information_schema.tables " +
+                "WHERE  TABLE_SCHEMA='" + profile.getSchema() + "' " +
+                "ORDER BY `TABLE_NAME` ASC";
+        CodeSketch.info(sql);
+        ResultSet rs = query.executeQuery(sql);
+
+        HashMap<String, TableInfo> tables = new HashMap<String, TableInfo>();
+
+        String tableName;
+        TableInfo tableInfo;
+
+        while (rs.next()) {
+            tableName = rs.getString("TABLE_NAME");
+            tableInfo = new TableInfo();
+            tableInfo.setName(rs.getString("TABLE_NAME"));
+            tableInfo.setComment(rs.getString("TABLE_COMMENT"));
+            tableInfo.setCatalog(rs.getString("TABLE_CATALOG"));
+            tableInfo.setSchema(rs.getString("TABLE_SCHEMA"));
+            tableInfo.setFields(new ArrayList<FieldInfo>());
+            tables.put(tableInfo.getName(),tableInfo);
+        }
+        rs.close();
+        query.close();
+        return tables;
+    }
+
     public HashMap<String,TableInfo> getTableInfos() throws  SQLException {
+
+        HashMap<String,TableInfo> tables =  getTableMeta();
+
         Statement query = getConnection().createStatement();
         String sql = "SELECT * " +
                 "FROM  information_schema.columns " +
@@ -113,8 +145,6 @@ public class ProfileConnection {
 
         ResultSet rs = query.executeQuery(sql);
 
-        HashMap<String, TableInfo> tables = new HashMap<String, TableInfo>();
-
         String tableName;
         TableInfo tableInfo;
 
@@ -122,13 +152,9 @@ public class ProfileConnection {
             tableName = rs.getString("TABLE_NAME");
             tableInfo = tables.get(tableName);
             if (tableInfo == null) {
-                tableInfo = new TableInfo();
-                tableInfo.setName(tableName);
-                tableInfo.setCatalog(rs.getString("TABLE_CATALOG"));
-                tableInfo.setSchema(rs.getString("TABLE_SCHEMA"));
-                tableInfo.setFields(new ArrayList<FieldInfo>());
-                tables.put(tableName, tableInfo);
+                CodeSketch.info("NO TABLE INFO FOUND");
             }
+
             FieldInfo fieldInfo = new FieldInfo();
             fieldInfo.setName(rs.getString("COLUMN_NAME"));
             fieldInfo.setDataType(rs.getString("DATA_TYPE"));

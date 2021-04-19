@@ -1,0 +1,56 @@
+{
+	"name" : "zhilingapp" , 
+	"url" : "http://vnzmi.com/codesketch/zhiling.zip",
+	"author" : "Vincent Mi <miwenshu@gmail.com>",
+	"description":"DAMI助教",
+	"variables":[
+		{
+			"name" : "basePackage",
+			"defaultValue": "cn.zhilingapp.dami.user",
+			"description":"包名"
+		},
+		{
+			"name" : "basePackageDir",
+			"defaultValue": "src/main/java/cn/zhilingapp/dami/user",
+			"description":"包路径"
+		}
+	],
+	"files" : [
+		{
+			"file" : "dto.java",
+			"name" : "${model}DTO.java",
+			"saveTo" : "${basePackageDir}/model"
+		},
+		{
+			"file" : "vo.java",
+			"name" : "${model}VO.java",
+			"saveTo" : "${basePackageDir}/model"
+		},
+		{
+			"file" : "service.java",
+			"name" : "${model}Service.java",
+			"saveTo" : "${basePackageDir}/service"
+		},
+		{
+			"file" : "service_impl.java",
+			"name" : "${model}ServiceImpl.java",
+			"saveTo" : "${basePackageDir}/service/impl"
+		},
+		{
+			"file" : "entity.java",
+			"name" : "${model}.java",
+			"saveTo" : "${basePackageDir}/repository/entity"
+		},
+		{
+			"file" : "repository.java",
+			"name" : "${model}Repository.java",
+			"saveTo" : "${basePackageDir}/repository"
+		},
+		{
+			"file" : "endpoint.java",
+			"name" : "${model}Controller.java",
+			"saveTo" : "${basePackageDir}/controller"
+		}
+	]
+
+}

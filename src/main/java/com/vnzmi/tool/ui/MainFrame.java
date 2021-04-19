@@ -7,6 +7,7 @@ import com.vnzmi.tool.model.*;
 
 
 import javax.swing.*;
+import javax.swing.border.Border;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -24,7 +25,7 @@ public class MainFrame extends JFrame {
     private JComboBox comboboxProfile = null;
     private JComboBox comboboxSchema = null;
     private JPanel centerPanel = null;
-    private JTextArea console = null;
+    private ConsoleView console = null;
     private JComboBox comboboxTemp;
 
     public ImageIcon icon;
@@ -36,6 +37,7 @@ public class MainFrame extends JFrame {
     private JFrame main;
 
     public MainFrame() {
+        console = new ConsoleView();
         init();
     }
 
@@ -79,18 +81,21 @@ public class MainFrame extends JFrame {
 
         add(getMainToolbar(), BorderLayout.NORTH);
 
-        console = new JTextArea(5, 100);
+        /*console = new JTextArea(5, 100);
 
         console.setBackground(Color.black);
         console.setForeground(Color.WHITE);
         console.setEditable(false);
         console.setAutoscrolls(true);
+        console.setVisible(false);*/
+
+
 
 
         JScrollPane consolePanel = new JScrollPane();
         consolePanel.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         consolePanel.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
-        consolePanel.getViewport().add(console);
+        //consolePanel.getViewport().add(console);
         add(consolePanel, BorderLayout.SOUTH);
 
         JPanel flag = new JPanel(new GridLayout(1, 1, 5, 5));
@@ -140,9 +145,26 @@ public class MainFrame extends JFrame {
     public JMenuBar getMainMenubar() {
         JMenuBar main = new JMenuBar();
         main.add(createFileMenu());
+        main.add(createViewMenu());
         main.add(createHelpMenu());
         main.setVisible(true);
         return main;
+    }
+
+    public JMenu createViewMenu(){
+        JMenu menuFile = new JMenu("View");
+        JMenuItem hideConsole = new JMenuItem("Hide Console");
+        JMenuItem showConsole = new JMenuItem("Show Console");
+        hideConsole.addActionListener(e -> {
+            console.setVisible(false);
+        });
+        menuFile.add(hideConsole);
+
+        showConsole.addActionListener(e -> {
+            console.setVisible(true);
+        });
+        menuFile.add(showConsole);
+        return menuFile;
     }
 
     public JMenu createFileMenu() {
@@ -407,9 +429,16 @@ public class MainFrame extends JFrame {
 
     public JPanel getTableToolbar() {
         JPanel toolbar = new JPanel();
+        TemplateInfo templateInfo = CodeSketch.getMainFrame().getSelectedTemplateInfo();
+        TemplateFile[] files = templateInfo.getFiles();
+
         //tablePanel.setBackground(Color.white);
         //toolbar.setPreferredSize(new Dimension(CodeSketch.getMainFrame().getWidth() - 10,30));
-        toolbar.setLayout(new FlowLayout(FlowLayout.RIGHT));
+        LayoutManager layoutManager;
+
+        layoutManager = new GridLayout(2,14);
+
+        toolbar.setLayout(layoutManager);
         JCheckBox chkAllTable = new JCheckBox("All tables");
         chkAllTable.addItemListener(e -> {
             if (_tablePanels != null) {
@@ -442,11 +471,11 @@ public class MainFrame extends JFrame {
             }
         });
 
-        TemplateInfo templateInfo = CodeSketch.getMainFrame().getSelectedTemplateInfo();
-        TemplateFile[] files = templateInfo.getFiles();
+
         for (int i = 0; i < files.length; i++) {
             JCheckBox allChk = new JCheckBox(files[i].getFile());
-            JCheckBox invChk = new JCheckBox("Inverse " + files[i].getFile());
+            JCheckBox invChk = new JCheckBox("Inv " + files[i].getFile());
+
             toolbar.add(allChk);
             toolbar.add(invChk);
             allChk.addItemListener(e -> {

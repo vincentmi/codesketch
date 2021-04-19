@@ -1,34 +1,43 @@
-package ${basePackage}.service;
+package ${basePackage}.service.impl;
 
-import ${basePackage}.dto.${model}Dto;
+import ${basePackage}.model.${model}DTO;
+import ${basePackage}.service.${model}Service;
 import ${basePackage}.repository.${model}Repository;
 import ${basePackage}.repository.entity.${model};
-import com.vnzmi.commons.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import javax.persistence.criteria.Predicate;
+import cn.zhilingapp.starter.api.common.ApiException;
+import cn.zhilingapp.starter.api.common.CommonErrorCode;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 
 @Service
-public class ${model}Service {
+public class ${model}ServiceImpl implements ${model}Service {
+
+    ${model}Repository ${modelCamel}Repository;
 
     @Autowired
-    ${model}Repository repository;
+    public void set${model}Repository(${model}Repository ${modelCamel}Repository)
+    {
+        this.${modelCamel}Repository = ${modelCamel}Repository;
+    }
 
     @Transactional
-    public ${model} create(${model}Dto dto)
+    public ${model} create(${model}DTO ${modelCamel}DTO)
     {
-        ${model} item = new ${model}(dto);
-        repository.save(item);
+        ${model} item = new ${model}(${modelCamel}DTO);
+        ${modelCamel}Repository.save(item);
         return item;
     }
 
     @Transactional
-    public ${model} update(long id , ${model}Dto dto)
+    public ${model} update(long id , ${model}DTO ${modelCamel}DTO)
     {
         ${model} item = getOrFail(id);
         <#list fields as field>
@@ -36,27 +45,27 @@ public class ${model}Service {
         <#elseif field.updated>
         <#elseif field.primaryKey>
         <#else>
-        item.${field.java.setter}(dto.${field.java.getter}());
+        item.${field.java.setter}(${modelCamel}DTO.${field.java.getter}());
         </#if>
         </#list>
-        repository.save(item);
+        ${modelCamel}Repository.save(item);
         return item;
     }
 
     @Transactional
     public ${model} getOrNull(Long id) {
-        return repository.findById(id).orElse(null);
+        return ${modelCamel}Repository.findById(id).orElse(null);
     }
 
     @Transactional
     public ${model} getOrFail(Long id) {
         if (id == null) {
-            throw new BusinessException(ErrorCode.ENTITY_NOT_FOUND, ErrorCode.ENTITY_NOT_FOUND_MESSAGE);
+            throw new ApiException(CommonErrorCode.NOT_FOUND);
         }
 
         ${model} item = getOrNull(id);
         if (item == null) {
-            throw new BusinessException(ErrorCode.ENTITY_NOT_FOUND, ErrorCode.ENTITY_NOT_FOUND_MESSAGE);
+            throw new ApiException(CommonErrorCode.NOT_FOUND);
         }
         return item;
     }
@@ -86,13 +95,13 @@ public class ${model}Service {
                 return null;
             }
         };
-        return repository.findAll(specification,pager);
+        return ${modelCamel}Repository.findAll(specification,pager);
     }
 
     @Transactional
     public boolean delete(Long id ) {
         ${model} item = getOrFail(id);
-        repository.delete(item);
+        ${modelCamel}Repository.delete(item);
         return true;
     }
 }

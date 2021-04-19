@@ -46,6 +46,7 @@ Vincent Mi (miwenshu@gmail.com)
 | ```${catalog}```  |String | id | 表类型 |
 | ```${schema}```  |String | id | 数据库 |
 | ```${name}```  |String | 1 | 名称 |
+| ```${comment}```  |String | 用户表 | 表注释 |
 | ```${fields}```  | ArrayList\<FieldInfo>  | |  |
 
 

@@ -42,6 +42,9 @@ public class CodeSketch {
 
     public static MainFrame getMainFrame()
     {
+        if(mainFrame == null){
+            mainFrame = new MainFrame();
+        }
         return mainFrame;
     }
 

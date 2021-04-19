@@ -1,0 +1,66 @@
+{
+	"name" : "spring_boot_v1" , 
+	"url" : "http://vnzmi.com/codesketch/spring_boot_v1.zip",
+	"author" : "Vincent Mi <miwenshu@gmail.com>",
+	"description":"spring 自定义模板",
+	"variables":[
+		{
+			"name" : "basePackage",
+			"defaultValue": "in.philo.ops.uc",
+			"description":"包名"
+		},
+		{
+			"name" : "basePackageDir",
+			"defaultValue": "src/main/java/in/philo/ops/uc",
+			"description":"包路径"
+		},
+		{
+			"name" : "packageService",
+			"defaultValue": "service",
+			"description":"服务包目录"
+		},
+		{
+			"name" : "packageDto",
+			"defaultValue": "dto",
+			"description":"DTO包目录"
+		},
+		{
+			"name" : "packageRepo",
+			"defaultValue": "repository",
+			"description":"REPO包目录"
+		},
+		{
+			"name" : "packageEnt",
+			"defaultValue": "entities",
+			"description":"REPO包目录"
+		}
+	],
+	"files" : [
+		{
+			"file" : "dto.java",
+			"name" : "${model}Dto.java",
+			"saveTo" : "${basePackageDir}/dto"
+		},
+		{
+			"file" : "service.java",
+			"name" : "${model}Service.java",
+			"saveTo" : "${basePackageDir}/service"
+		},
+		{
+			"file" : "entity.java",
+			"name" : "${model}.java",
+			"saveTo" : "${basePackageDir}/repository/entity"
+		},
+		{
+			"file" : "repository.java",
+			"name" : "${model}Repository.java",
+			"saveTo" : "${basePackageDir}/repository"
+		},
+		{
+			"file" : "endpoint.java",
+			"name" : "${model}Endpoint.java",
+			"saveTo" : "${basePackageDir}/endpoint"
+		}
+	]
+
+}
