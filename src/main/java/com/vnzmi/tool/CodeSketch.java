@@ -5,8 +5,12 @@ import com.vnzmi.tool.ui.MainFrame;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
+
 import javax.swing.*;
 import java.awt.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.URL;
 
 
@@ -22,6 +26,7 @@ public class CodeSketch {
 
         javaVersion = javaVersion(System.getProperty("java.version"));
         info("JVM="+javaVersion);
+        setDockIcon();
 
         URL resource = CodeSketch.class.getClassLoader().getResource("setting.json");
         String path = resource.getPath();
@@ -38,6 +43,28 @@ public class CodeSketch {
         }
 
         mainFrame = new MainFrame();
+    }
+
+    private static void setDockIcon(){
+        try {
+            Class util = Class.forName("com.apple.eawt.Application");
+            Method getApplication = util.getMethod("getApplication", new Class[0]);
+            Object application = getApplication.invoke(util);
+            Class params[] = new Class[1];
+            params[0] = Image.class;
+            Method setDockIconImage = util.getMethod("setDockIconImage", params);
+            URL url = CodeSketch.class.getClassLoader().getResource("codesketch.png");
+            Image image = Toolkit.getDefaultToolkit().getImage(url);
+            setDockIconImage.invoke(application, image);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     public static MainFrame getMainFrame()

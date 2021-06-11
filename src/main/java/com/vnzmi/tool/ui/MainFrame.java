@@ -8,6 +8,7 @@ import com.vnzmi.tool.model.*;
 
 import javax.swing.*;
 import javax.swing.border.Border;
+import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
@@ -38,6 +39,7 @@ public class MainFrame extends JFrame {
 
     public MainFrame() {
         console = new ConsoleView();
+        setGlobalFont(new Font("Dialog",Font.PLAIN,12));
         init();
     }
 
@@ -123,6 +125,16 @@ public class MainFrame extends JFrame {
 
     }
 
+    public void setGlobalFont(Font font){
+        FontUIResource fontRes = new FontUIResource(font);
+        for(Enumeration keys = UIManager.getDefaults().keys(); keys.hasMoreElements();){
+            Object key = keys.nextElement();
+            Object value = UIManager.get(key);
+            if(value instanceof FontUIResource)
+                UIManager.put(key, fontRes);
+        }
+    }
+
     public ArrayList<TablePanel> getTablePanels() {
         return _tablePanels;
     }
@@ -166,6 +178,7 @@ public class MainFrame extends JFrame {
         menuFile.add(showConsole);
         return menuFile;
     }
+
 
     public JMenu createFileMenu() {
         JMenu menuFile = new JMenu("Setting");
@@ -255,6 +268,11 @@ public class MainFrame extends JFrame {
         tempButton.addActionListener(e -> new TemplateView(comboboxTemp.getSelectedIndex()).show(main));
         tempPanel.add(tempButton);
 
+        JButton tempMktButton = new JButton("More Templates");
+        tempMktButton.addActionListener(e -> new TemplateListView(this));
+        tempPanel.add(tempMktButton);
+
+
         JPanel projectPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         final JTextField textProject = new JTextField(setting.getProject());
         textProject.setColumns(40);
@@ -302,7 +320,7 @@ public class MainFrame extends JFrame {
                 Setting setting13 = Loader.getInstance().getSetting();
                 Profile selected = setting13.getProfiles().get(comboboxProfile.getSelectedIndex());
                 selected.setSchema(selectedItem);
-                //Loader.getInstance().saveSetting();
+                Loader.getInstance().saveSetting();
             }
         });
 
@@ -477,7 +495,7 @@ public class MainFrame extends JFrame {
             JCheckBox invChk = new JCheckBox("Inv " + files[i].getFile());
 
             toolbar.add(allChk);
-            toolbar.add(invChk);
+            //toolbar.add(invChk);
             allChk.addItemListener(e -> {
                 if (_tablePanels != null) {
                     if (e.getStateChange() == ItemEvent.SELECTED) {

@@ -51,6 +51,7 @@ public class ProfileConnection {
                 +"user="+this.profile.getUser()
                 +"&password="+password;
         CodeSketch.info(dsn);
+        DriverManager.setLoginTimeout(5);
         return DriverManager.getConnection(dsn);
     }
 

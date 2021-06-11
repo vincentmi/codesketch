@@ -18,6 +18,7 @@ import java.io.IOException;
 public class PreviewPanel {
     private TableInfo tableInfo;
     private TemplateInfo templateInfo;
+    private CodePack[] codePacks ;
 
     public  PreviewPanel(TableInfo tableInfo)
     {
@@ -29,7 +30,7 @@ public class PreviewPanel {
         TemplateFile[] files = templateInfo.getFiles();
 
         Generator gen = new Generator(templateInfo);
-        CodePack[] codePacks = null;
+        codePacks = null;
         try {
             codePacks = gen.build(tableInfo);
         }catch (Exception e){
@@ -118,9 +119,25 @@ public class PreviewPanel {
         btn.addActionListener(e -> {
             codePack.saveFile();
         });
-        statusPanel.add(btn,BorderLayout.EAST);
+        JButton btnSaveAll = new JButton("Save All");
+        btnSaveAll.addActionListener(e -> {
+            saveAll();
+        });
+
+        JPanel btnPanel = new JPanel();
+
+        btnPanel.add(btnSaveAll);
+        btnPanel.add(btn);
+        statusPanel.add(btnPanel,BorderLayout.EAST);
         cp.add(statusPanel,BorderLayout.SOUTH);
 
         return cp;
+    }
+
+    private void saveAll()
+    {
+        for(CodePack cp : codePacks){
+            cp.saveFile();
+        }
     }
 }

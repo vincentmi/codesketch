@@ -27,6 +27,11 @@ public class Generator {
     private HashMap<String, Object> baseData;
 
     public Generator(TemplateInfo templateInfo) {
+        init(templateInfo);
+    }
+
+    private void init(TemplateInfo templateInfo)
+    {
         this.templateInfo = templateInfo;
         cfg = new Configuration(Configuration.VERSION_2_3_28);
         File templateHome = new File(templateInfo.getPath());
@@ -161,7 +166,6 @@ public class Generator {
                 //System.out.println(name);
             }
         }
-
         return codePacks;
     }
 }
