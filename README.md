@@ -45,7 +45,10 @@ Vincent Mi (miwenshu@gmail.com)
 |---| --- | ---- |---|
 | ```${catalog}```  |String | id | 表类型 |
 | ```${schema}```  |String | id | 数据库 |
-| ```${name}```  |String | 1 | 名称 |
+| ```${name}```  |String | user_info | 名称 |
+| ```${prefix}```  | String  | user|  表前缀 |
+| ```${group}```  | String  | user|  如果有3个表拥有一样的前缀则认为这是一组表,否则为空 |
+| ```${fields}```  | ArrayList\<FieldInfo>  | |  |
 | ```${comment}```  |String | 用户表 | 表注释 |
 | ```${fields}```  | ArrayList\<FieldInfo>  | |  |
 

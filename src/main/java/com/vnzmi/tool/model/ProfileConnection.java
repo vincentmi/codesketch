@@ -206,7 +206,7 @@ public class ProfileConnection {
 
         for(String group : tableGroupCount.keySet()){
             List<String> tableList = tableGroupCount.get(group);
-            if(tableList.size() > 1){
+            if(tableList.size() > 2){
                 for(String tName : tableList){
                     tables.get(tName).setGroup(group);
                 }
@@ -217,9 +217,9 @@ public class ProfileConnection {
         }
         //查询表组结束
 
-        tables.forEach( (str,table) -> {
-            CodeSketch.info(table.getName() +" ->"+table.getGroup());
-        });
+//        tables.forEach( (str,table) -> {
+//            CodeSketch.info(table.getName() +" ->"+table.getGroup());
+//        });
 
         return tables;
     }

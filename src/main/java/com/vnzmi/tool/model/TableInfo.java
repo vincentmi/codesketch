@@ -27,6 +27,16 @@ public class TableInfo {
         this.group = group;
     }
 
+    public String getPrefix(){
+        int index = name.indexOf("_");
+        if(index != -1)
+        {
+            return name.substring(0,index);
+        }else{
+            return "";
+        }
+    }
+
     public void setCatalog(String catalog) {
         this.catalog = catalog;
     }
