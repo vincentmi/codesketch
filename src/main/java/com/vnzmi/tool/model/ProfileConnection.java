@@ -8,8 +8,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 
 public class ProfileConnection {
 
@@ -189,6 +188,39 @@ public class ProfileConnection {
         }
         rs.close();
         query.close();
+
+        //查询表组
+        HashMap<String, List<String>> tableGroupCount = new HashMap<>();
+        for(String tName : tables.keySet())
+        {
+            int index = tName.indexOf("_");
+            if(index != -1)
+            {
+                String group = tName.substring(0,index);
+                if(!tableGroupCount.containsKey(group)){
+                    tableGroupCount.put(group,new ArrayList<>());
+                }
+                tableGroupCount.get(group).add(tName);
+            }
+        }
+
+        for(String group : tableGroupCount.keySet()){
+            List<String> tableList = tableGroupCount.get(group);
+            if(tableList.size() > 1){
+                for(String tName : tableList){
+                    tables.get(tName).setGroup(group);
+                }
+                if(tables.containsKey(group)){
+                    tables.get(group).setGroup(group);
+                }
+            }
+        }
+        //查询表组结束
+
+        tables.forEach( (str,table) -> {
+            CodeSketch.info(table.getName() +" ->"+table.getGroup());
+        });
+
         return tables;
     }
 }

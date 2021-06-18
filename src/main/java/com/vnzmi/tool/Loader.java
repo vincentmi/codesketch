@@ -64,11 +64,17 @@ public class Loader {
     }
 
 
-    public ArrayList<TemplateInfo> getTemplateInfos() {
-        if (templateInfos == null) {
+    public ArrayList<TemplateInfo> getTemplateInfos(boolean refresh) {
+        if(refresh){
+            loadTemplateInfos();
+        }else if (templateInfos == null) {
             loadTemplateInfos();
         }
         return templateInfos;
+    }
+
+    public ArrayList<TemplateInfo> getTemplateInfos() {
+        return getTemplateInfos(false);
     }
 
     public void saveSetting() {

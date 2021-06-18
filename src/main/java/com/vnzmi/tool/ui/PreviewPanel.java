@@ -27,6 +27,9 @@ public class PreviewPanel {
         templateInfo = CodeSketch.getMainFrame().getSelectedTemplateInfo();
 
         JTabbedPane tab = new JTabbedPane();
+        tab.setForeground(Color.BLACK);
+
+
         TemplateFile[] files = templateInfo.getFiles();
 
         Generator gen = new Generator(templateInfo);

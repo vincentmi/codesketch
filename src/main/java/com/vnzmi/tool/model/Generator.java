@@ -58,11 +58,17 @@ public class Generator {
         //模板数据
         baseData = new HashMap<String, Object>();
         Setting setting = Loader.getInstance().getSetting();
+
+        baseData.put("projectPath", StringUtil.rtrim(setting.getProject().trim(), "/\\"));
+
+        baseData.putAll(templateInfo.getDefaultValues());
+
+
         Map<String, String> values = Loader.getInstance()
                 .getTemplateValues()
                 .getOrDefault(templateInfo.getName(), new HashMap<String, String>()
                 );
-        baseData.put("projectPath", StringUtil.rtrim(setting.getProject().trim(), "/\\"));
+
         baseData.putAll(values);
     }
 

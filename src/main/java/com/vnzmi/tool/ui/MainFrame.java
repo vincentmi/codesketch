@@ -243,6 +243,21 @@ public class MainFrame extends JFrame {
         return menu;
     }
 
+    public synchronized void reloadTemplates(){
+        int selectedIndex = comboboxTemp.getSelectedIndex();
+        comboboxTemp.removeAllItems();
+        ArrayList<TemplateInfo> templateInfos = Loader.getInstance().getTemplateInfos(true);
+        for (int i = 0; i < templateInfos.size(); i++) {
+            comboboxTemp.addItem(templateInfos.get(i).getName());
+        }
+        comboboxTemp.setSelectedIndex(selectedIndex);
+    }
+
+    private JComboBox getTemplateCombo()
+    {
+        return comboboxTemp;
+    }
+
 
     private JPanel getMainToolbar() {
 
@@ -259,13 +274,15 @@ public class MainFrame extends JFrame {
         JPanel tempPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         tempPanel.add(new JLabel("Template:"));
         comboboxTemp = new JComboBox();
-        ArrayList<TemplateInfo> templateInfos = Loader.getInstance().getTemplateInfos();
-        for (int i = 0; i < templateInfos.size(); i++) {
-            comboboxTemp.addItem(templateInfos.get(i).getName());
-        }
+        reloadTemplates();
         tempPanel.add(comboboxTemp);
+
+        JButton tempReloadButton = new JButton("Reload Templates");
+        tempReloadButton.addActionListener(e -> reloadTemplates());
+        tempPanel.add(tempReloadButton);
+
         JButton tempButton = new JButton("Variables");
-        tempButton.addActionListener(e -> new TemplateView(comboboxTemp.getSelectedIndex()).show(main));
+        tempButton.addActionListener(e -> new TemplateView(getTemplateCombo().getSelectedIndex()).show(main));
         tempPanel.add(tempButton);
 
         JButton tempMktButton = new JButton("More Templates");

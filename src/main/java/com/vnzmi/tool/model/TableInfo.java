@@ -10,12 +10,21 @@ public class TableInfo {
     private String schema ;
     private String name;
     private String comment;
+    private String group = "";
     private ArrayList<FieldInfo> fields;
 
     private ArrayList<FieldInfo> pk = null;
 
     public String getCatalog() {
         return catalog;
+    }
+
+    public String getGroup(){
+        return group;
+    }
+
+    public void setGroup(String group){
+        this.group = group;
     }
 
     public void setCatalog(String catalog) {

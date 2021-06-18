@@ -4,6 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Data
 public class TemplateInfo {
     private String name;
@@ -31,6 +34,14 @@ public class TemplateInfo {
     public String toString()
     {
         return toJson();
+    }
+
+    public Map<String,String> getDefaultValues(){
+        HashMap<String,String> vars  = new HashMap<>();
+        for ( TemplateVariable variable : variables){
+            vars.put(variable.getName(),variable.getDefaultValue());
+        }
+        return vars;
     }
 
 }

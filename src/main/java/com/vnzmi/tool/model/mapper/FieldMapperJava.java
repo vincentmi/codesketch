@@ -109,7 +109,7 @@ public class FieldMapperJava extends FieldMapperCommon {
             }
 
             if (defaultMapper.getType().equals(FieldMapper.TYPE_STRING)) {
-                StringBuffer sb = new StringBuffer("@Size(");
+                StringBuffer sb = new StringBuffer("@Length(");
                 if (!info.isNullable()) {
                     sb.append("min=1,");
                 }

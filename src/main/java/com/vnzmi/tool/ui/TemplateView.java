@@ -29,6 +29,8 @@ public class TemplateView {
 
 
     public TemplateView(int index) {
+
+        CodeSketch.info("template-view loaded index="+index);
         selectedIndex = index;
         templateInfo = Loader.getInstance().getTemplateInfos().get(selectedIndex);
         templateValue = Loader.getInstance().getTemplateValues().get(templateInfo.getName());
