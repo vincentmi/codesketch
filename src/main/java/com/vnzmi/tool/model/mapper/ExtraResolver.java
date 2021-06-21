@@ -1,7 +1,10 @@
 package com.vnzmi.tool.model.mapper;
 
+import com.sun.tools.javac.util.StringUtils;
 import com.vnzmi.tool.ArrayUtil;
+import com.vnzmi.tool.CodeSketch;
 import com.vnzmi.tool.model.FieldInfo;
+import freemarker.template.utility.StringUtil;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -55,26 +58,40 @@ public class ExtraResolver {
     {
         String title = null;
         String name = info.getName();
-        Iterator<String> keys = guessTitles.keySet().iterator();
-        while(keys.hasNext()) {
-            String key = keys.next();
-            String[] compare = guessTitles.get(key);
-            if (ArrayUtil.inArray(name, compare)) {
-                title = key;
-                break;
-            }
-        }
 
-        if(title == null)
-        {
-            if(info.getComment() != null && !info.getComment().equals("") &&  info.getComment().length() < 6)
-            {
-                return info.getComment();
-            }else{
-                return name;
+        title = pickTitleFromComment(info.getComment());
+
+        if(title == null) {
+            Iterator<String> keys = guessTitles.keySet().iterator();
+            while(keys.hasNext()) {
+                String key = keys.next();
+                String[] compare = guessTitles.get(key);
+                if (ArrayUtil.inArray(name, compare)) {
+                    title = key;
+                    break;
+                }
             }
+            return title == null? name : title;
         }else{
             return title;
+        }
+    }
+
+    public static String pickTitleFromComment(String commentText)
+    {
+        if(commentText == null || commentText.trim().equals(""))
+        {
+            return null;
+        }
+        commentText = commentText.trim();
+        int idx = commentText.indexOf("(");
+        if(idx == -1){
+            idx = commentText.indexOf(" ");
+        }
+        if(idx > -1){
+            return commentText.substring(0,idx);
+        }else{
+            return commentText;
         }
     }
 
