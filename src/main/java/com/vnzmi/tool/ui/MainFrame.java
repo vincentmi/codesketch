@@ -140,7 +140,12 @@ public class MainFrame extends JFrame {
     }
 
     public TemplateInfo getSelectedTemplateInfo() {
-        return Loader.getInstance().getTemplateInfos().get(comboboxTemp.getSelectedIndex());
+        if(comboboxTemp.getSelectedIndex() == -1){
+            JOptionPane.showMessageDialog(this,"please select a template.");
+            return null;
+        }else{
+            return Loader.getInstance().getTemplateInfos().get(comboboxTemp.getSelectedIndex());
+        }
     }
 
 

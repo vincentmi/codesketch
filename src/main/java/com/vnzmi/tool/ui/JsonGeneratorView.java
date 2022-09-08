@@ -4,7 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.sun.tools.javac.jvm.Code;
 import com.vnzmi.tool.CodeSketch;
+import com.vnzmi.tool.DateUtil;
 import com.vnzmi.tool.StringUtil;
 import com.vnzmi.tool.model.FieldInfo;
 import com.vnzmi.tool.model.TableInfo;
@@ -24,7 +26,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.List;
 
-public class JsonGeneratorView{
+public class JsonGeneratorView {
 
     JDialog dialog;
 
@@ -41,9 +43,16 @@ public class JsonGeneratorView{
 
         JPanel mainPanel = new JPanel(new BorderLayout());
         JButton btnGen = new JButton("Preview");
-        JPanel btnPanel = new JPanel(new BorderLayout(3,3));
-        btnPanel.add(new Label("Please paste you data json below .We will try to guess a  data structure."),BorderLayout.WEST);
-        btnPanel.add(btnGen,BorderLayout.EAST);
+        JButton btnDDL = new JButton("DDL");
+        JPanel btnPanel = new JPanel(new BorderLayout(3, 3));
+        btnPanel.add(new Label("Please paste you data json below .We will try to guess a  data structure."), BorderLayout.WEST);
+
+        JPanel rightBtnPanel = new JPanel(new FlowLayout());
+        rightBtnPanel.add(btnGen);
+        rightBtnPanel.add(btnDDL);
+
+        btnPanel.add(rightBtnPanel, BorderLayout.EAST);
+
 
         mainPanel.add(btnPanel, BorderLayout.NORTH);
 
@@ -64,72 +73,87 @@ public class JsonGeneratorView{
 
         btnGen.addActionListener(e -> {
             String jsonData = textArea.getText();
-            CodeSketch.info(jsonData);
-            ObjectMapper objectMapper = new ObjectMapper();
-            try {
-                JsonNode node = objectMapper.readTree(jsonData);
-                if(!node.isObject()){
-                    JOptionPane.showMessageDialog(dialog,"Please input a JSON object string");
-                }else{
+            new PreviewPanel(getTableInfo(jsonData));
+        });
 
-                    List<FieldInfo> fieldInfos = new ArrayList<>();
-
-                    Iterator<Map.Entry<String, JsonNode>> children  = node.fields();
-                    Map.Entry<String, JsonNode> temp;
-                    while(children.hasNext()){
-                        temp = children.next();
-                        JsonNode value = temp.getValue();
-                        FieldInfo fieldInfo = new FieldInfo();
-                        fieldInfo.setName(StringUtil.toLine(temp.getKey()));
-                        fieldInfo.setComment("");
-
-                        String dataType ;
-                        if(value.isBoolean()){
-                            dataType = FieldMapper.TYPE_BOOLEAN;
-                        }else if(value.isNumber() || value.isLong() || value.isBigDecimal()){
-                            dataType = FieldMapper.TYPE_INT;
-                        }else if(value.isDouble() || value.isBigDecimal()){
-                            dataType = FieldMapper.TYPE_FLOAT;
-                        }else if(value.isTextual()){
-                            String textValue = value.textValue();
-                            if(textValue.matches("[0-9\\-: ]*")){
-                                dataType = FieldMapper.TYPE_DATETIME;
-                            }else{
-                                dataType = FieldMapper.TYPE_STRING;
-                            }
-
-                        }else{
-                            dataType = FieldMapper.TYPE_STRING;
-                        }
-
-
-
-                        fieldInfo.setDataType(dataType);
-                        fieldInfo.setDefaultValue(value.textValue());
-                        fieldInfos.add(fieldInfo);
-                    }
-
-                    TableInfo jsonTable = new TableInfo();
-                    jsonTable.setComment("");
-                    jsonTable.setCatalog("");
-                    jsonTable.setSchema("");
-                    jsonTable.setName("json_object");
-                    jsonTable.setFields(fieldInfos);
-                    jsonTable.setPk(fieldInfos.get(0));
-                    new PreviewPanel(jsonTable);
-
-
-                }
-            } catch (JsonProcessingException jsonProcessingException) {
-                jsonProcessingException.printStackTrace();
-                JOptionPane.showMessageDialog(dialog,"Bad Json Data : "+jsonProcessingException.getMessage());
-            }
+        btnDDL.addActionListener(e ->{
+            String jsonData = textArea.getText();
+            new DDLPreviewPanel(getTableInfo(jsonData));
         });
 
         RTextScrollPane sp = new RTextScrollPane(textArea);
         mainPanel.add(sp, BorderLayout.CENTER);
         dialog.add(mainPanel);
         dialog.setVisible(true);
+    }
+
+
+    private TableInfo getTableInfo(String jsonData) {
+        CodeSketch.info(jsonData);
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            JsonNode node = objectMapper.readTree(jsonData);
+            if (!node.isObject()) {
+                JOptionPane.showMessageDialog(dialog, "Please input a JSON object string");
+            } else {
+
+                List<FieldInfo> fieldInfos = new ArrayList<>();
+
+                Iterator<Map.Entry<String, JsonNode>> children = node.fields();
+                Map.Entry<String, JsonNode> temp;
+                while (children.hasNext()) {
+                    temp = children.next();
+
+                    String name = StringUtil.toLine(temp.getKey());
+                    JsonNode value = temp.getValue();
+                    FieldInfo fieldInfo = new FieldInfo();
+                    fieldInfo.setName(name);
+                    fieldInfo.setComment(name);
+
+                    String dataType;
+                    if (value.isBoolean()) {
+                        dataType = FieldMapper.TYPE_BOOLEAN;
+                    } else if (value.isNumber() || value.isLong() || value.isBigDecimal()) {
+                        dataType = FieldMapper.TYPE_INT;
+                    } else if (value.isDouble() || value.isBigDecimal()) {
+                        dataType = FieldMapper.TYPE_FLOAT;
+                    } else if (value.isTextual()) {
+                        String textValue = value.textValue();
+                        CodeSketch.info("---text["+textValue);
+                        if (DateUtil.tryParseDateTime(textValue)!=null) {
+                            dataType = FieldMapper.TYPE_DATETIME;
+                        }else if (DateUtil.tryParseDate(textValue)!=null) {
+                            dataType = FieldMapper.TYPE_DATE;
+                        }else  if(textValue.length() > 100){
+                            dataType = FieldMapper.TYPE_TEXT;
+                        }else if(textValue.matches("^[0-9]+\\.+[0-9]+$")){
+                            dataType = FieldMapper.TYPE_FLOAT;
+                        }else{
+                            dataType = FieldMapper.TYPE_STRING;
+                        }
+                    } else {
+                        dataType = FieldMapper.TYPE_STRING;
+                    }
+                    fieldInfo.setDataType(dataType);
+                    fieldInfo.setDefaultValue(value.textValue());
+                    fieldInfos.add(fieldInfo);
+                }
+
+                TableInfo jsonTable = new TableInfo();
+                jsonTable.setComment("");
+                jsonTable.setCatalog("");
+                jsonTable.setSchema("");
+                jsonTable.setName("json_object");
+                jsonTable.setFields(fieldInfos);
+                jsonTable.setPk(fieldInfos.get(0));
+                return jsonTable;
+            }
+        } catch (JsonProcessingException jsonProcessingException) {
+            jsonProcessingException.printStackTrace();
+            JOptionPane.showMessageDialog(dialog, "Bad Json Data : " + jsonProcessingException.getMessage());
+
+        }
+        return null;
     }
 
 }
