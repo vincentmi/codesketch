@@ -3,6 +3,9 @@ package com.vnzmi.tool.model;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.io.File;
+import java.util.List;
+
 import java.util.ArrayList;
 
 public class TableInfo {
@@ -11,9 +14,9 @@ public class TableInfo {
     private String name;
     private String comment;
     private String group = "";
-    private ArrayList<FieldInfo> fields;
+    private List<FieldInfo> fields;
 
-    private ArrayList<FieldInfo> pk = null;
+    private List<FieldInfo> pk = null;
 
     public String getCatalog() {
         return catalog;
@@ -61,12 +64,23 @@ public class TableInfo {
         this.name = name;
     }
 
-    public ArrayList<FieldInfo> getFields() {
+    public List<FieldInfo> getFields() {
         return fields;
     }
 
-    public void setFields(ArrayList<FieldInfo> fields) {
+    public void setFields(List<FieldInfo> fields) {
         this.fields = fields;
+    }
+
+    public void setPk(FieldInfo pk){
+        List<FieldInfo> pkList = new ArrayList<>();
+        pkList.add(pk);
+        setPkList(pkList);
+    }
+
+    public void setPkList(List<FieldInfo> pk){
+
+        this.pk = pk;
     }
 
 
@@ -76,7 +90,7 @@ public class TableInfo {
         return toJson();
     }
 
-    private ArrayList<FieldInfo> getPrimaryKeys()
+    private List<FieldInfo> getPrimaryKeys()
     {
         if(pk == null)
         {

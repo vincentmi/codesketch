@@ -2,10 +2,12 @@ package com.vnzmi.tool.model;
 
 import com.vnzmi.tool.StringUtil;
 import com.vnzmi.tool.model.mapper.*;
+import lombok.Data;
+import lombok.ToString;
 
 import java.util.HashMap;
 
-
+@ToString(exclude = {"that","cache"})
 public class FieldInfo {
     private String name;
     private String defaultValue;
@@ -19,6 +21,7 @@ public class FieldInfo {
     private String key = "";
     private String extra = "";
     private String comment = "";
+
 
     private FieldInfo that;
 

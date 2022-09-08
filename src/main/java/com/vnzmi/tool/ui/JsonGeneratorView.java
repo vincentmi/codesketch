@@ -1,6 +1,14 @@
 package com.vnzmi.tool.ui;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.vnzmi.tool.CodeSketch;
+import com.vnzmi.tool.StringUtil;
+import com.vnzmi.tool.model.FieldInfo;
+import com.vnzmi.tool.model.TableInfo;
+import com.vnzmi.tool.model.mapper.FieldMapper;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rsyntaxtextarea.Theme;
@@ -8,7 +16,13 @@ import org.fife.ui.rtextarea.RTextScrollPane;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.List;
 
 public class JsonGeneratorView{
 
@@ -47,6 +61,70 @@ public class JsonGeneratorView{
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        btnGen.addActionListener(e -> {
+            String jsonData = textArea.getText();
+            CodeSketch.info(jsonData);
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                JsonNode node = objectMapper.readTree(jsonData);
+                if(!node.isObject()){
+                    JOptionPane.showMessageDialog(dialog,"Please input a JSON object string");
+                }else{
+
+                    List<FieldInfo> fieldInfos = new ArrayList<>();
+
+                    Iterator<Map.Entry<String, JsonNode>> children  = node.fields();
+                    Map.Entry<String, JsonNode> temp;
+                    while(children.hasNext()){
+                        temp = children.next();
+                        JsonNode value = temp.getValue();
+                        FieldInfo fieldInfo = new FieldInfo();
+                        fieldInfo.setName(StringUtil.toLine(temp.getKey()));
+                        fieldInfo.setComment("");
+
+                        String dataType ;
+                        if(value.isBoolean()){
+                            dataType = FieldMapper.TYPE_BOOLEAN;
+                        }else if(value.isNumber() || value.isLong() || value.isBigDecimal()){
+                            dataType = FieldMapper.TYPE_INT;
+                        }else if(value.isDouble() || value.isBigDecimal()){
+                            dataType = FieldMapper.TYPE_FLOAT;
+                        }else if(value.isTextual()){
+                            String textValue = value.textValue();
+                            if(textValue.matches("[0-9\\-: ]*")){
+                                dataType = FieldMapper.TYPE_DATETIME;
+                            }else{
+                                dataType = FieldMapper.TYPE_STRING;
+                            }
+
+                        }else{
+                            dataType = FieldMapper.TYPE_STRING;
+                        }
+
+
+
+                        fieldInfo.setDataType(dataType);
+                        fieldInfo.setDefaultValue(value.textValue());
+                        fieldInfos.add(fieldInfo);
+                    }
+
+                    TableInfo jsonTable = new TableInfo();
+                    jsonTable.setComment("");
+                    jsonTable.setCatalog("");
+                    jsonTable.setSchema("");
+                    jsonTable.setName("json_object");
+                    jsonTable.setFields(fieldInfos);
+                    jsonTable.setPk(fieldInfos.get(0));
+                    new PreviewPanel(jsonTable);
+
+
+                }
+            } catch (JsonProcessingException jsonProcessingException) {
+                jsonProcessingException.printStackTrace();
+                JOptionPane.showMessageDialog(dialog,"Bad Json Data : "+jsonProcessingException.getMessage());
+            }
+        });
 
         RTextScrollPane sp = new RTextScrollPane(textArea);
         mainPanel.add(sp, BorderLayout.CENTER);
